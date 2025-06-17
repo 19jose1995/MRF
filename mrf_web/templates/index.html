@@ -1,0 +1,151 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Movimiento República Fuerte: plataforma multisectorial de apoyo al presidente Leonel Fernández." />
+  <title>Movimiento República Fuerte</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+  <a href="#hero" class="skip-link">Saltar al contenido</a>
+  <header class="header">
+    <div class="container header__inner">
+      <img src="{% static 'img/logo-mrf.png' %}" alt="Logo Movimiento República Fuerte" class="logo">
+      <button class="nav-toggle" aria-label="Abrir menú"><i class="fas fa-bars"></i></button>
+      <nav class="nav">
+        <a href="#hero">Inicio</a>
+        <a href="#objetivos">Objetivos</a>
+        <a href="#sectores">Sectores</a>
+        <a href="#galeria">Galería</a>
+        <a href="#registro">Registro</a>
+        <a href="#estructura">Estructura</a>
+        <a href="#accion">Acción</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section id="hero" class="hero">
+      <div class="hero__decor">
+        <span class="shape shape--1"></span>
+        <span class="shape shape--2"></span>
+        <span class="shape shape--3"></span>
+      </div>
+      <img src="{% static 'img/logo-mrf.png' %}" alt="" aria-hidden="true" class="hero__watermark" loading="lazy">
+      <div class="container hero__inner">
+        <h1 class="hero__title">Movimiento República Fuerte</h1>
+        <p class="hero__subtitle">
+          “Leonel es garantía de estabilidad, progreso y futuro para todos los dominicanos.”
+        </p>
+        <a href="#registro" class="btn">
+          Regístrate <i class="fas fa-user-plus"></i>
+        </a>
+      </div>
+    </section>
+
+    <!-- SECTORES -->
+    <section id="sectores" class="section section--dark">
+      <div class="container">
+        <h2 class="section-title">Sectores a Incluir</h2>
+        <div class="cards">
+          <div class="small-card"><i class="fas fa-hand-holding-medical"></i><p>Salud</p></div>
+          <div class="small-card"><i class="fas fa-briefcase"></i><p>Empresarial</p></div>
+          <div class="small-card"><i class="fas fa-school"></i><p>Educación</p></div>
+          <div class="small-card"><i class="fas fa-child"></i><p>Juventud</p></div>
+          <div class="small-card"><i class="fas fa-female"></i><p>Mujeres</p></div>
+          <div class="small-card"><i class="fas fa-tractor"></i><p>Agro</p></div>
+          <div class="small-card"><i class="fas fa-futbol"></i><p>Cultura & Deportes</p></div>
+          <div class="small-card"><i class="fas fa-gavel"></i><p>Profesionales</p></div>
+          <div class="small-card"><i class="fas fa-church"></i><p>Organizaciones</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GALERÍA -->
+    <section id="galeria" class="section section--accent">
+      <div class="container">
+        <h2 class="section-title">Galería de Fotos</h2>
+        <div class="gallery">
+          <div class="gallery-item"><img src="{% static 'img/galeria1.jpg' %}" alt="Evento 1"></div>
+          <div class="gallery-item"><img src="{% static 'img/galeria2.jpg' %}" alt="Evento 2"></div>
+          <div class="gallery-item"><img src="{% static 'img/galeria3.jpg' %}" alt="Evento 3"></div>
+          <div class="gallery-item"><img src="{% static 'img/galeria4.jpg' %}" alt="Evento 4"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ESTRUCTURA -->
+    <section id="estructura" class="section section--light">
+      <div class="container">
+        <h2 class="section-title">Estructura Organizativa</h2>
+        <div class="cards-structure">
+          <div class="structure-card">
+            <i class="fas fa-sitemap structure-card__icon"></i>
+            <h3>Comité Nacional Coordinador</h3>
+            <p>Dirige y articula la estrategia general del Movimiento República Fuerte.</p>
+          </div>
+          <div class="structure-card">
+            <i class="fas fa-users-cog structure-card__icon"></i>
+            <h3>Coordinaciones Sectoriales</h3>
+            <p>Representan y movilizan a cada uno de los sectores clave.</p>
+          </div>
+          <div class="structure-card">
+            <i class="fas fa-globe-americas structure-card__icon"></i>
+            <h3>Capítulos Provinciales & Municipales</h3>
+            <p>Implementan acciones y eventos a nivel local en todo el país.</p>
+          </div>
+          <div class="structure-card">
+            <i class="fas fa-bullhorn structure-card__icon"></i>
+            <h3>Equipo de Comunicación</h3>
+            <p>Difunde el mensaje, coordina campañas y gestiona redes sociales.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ACCIÓN, CONTACTO, REGISTRO -->
+    <!-- ... permanecen iguales ... -->
+
+  </main>
+
+  <footer class="footer">
+    <img src="{% static 'img/logo-mrf.png' %}" alt="Logo MRF" class="footer-logo">
+    <div class="container">© 2025 Movimiento República Fuerte</div>
+  </footer>
+
+  <script>
+    document.getElementById('regForm')?.addEventListener('submit', async e => {
+      e.preventDefault();
+      const data = {
+        name: e.target.name.value,
+        cedula: e.target.cedula.value,
+        phone: e.target.phone.value,
+        sector: e.target.sector.value,
+        colegio: e.target.colegio.value,
+        email: e.target.email.value,
+        oficio: e.target.oficio.value
+      };
+      const res = await fetch('/api/register', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(data)
+      });
+      const msg = document.getElementById('formMessage');
+      if (res.ok) {
+        msg.textContent = '¡Registro enviado! Gracias.';
+        msg.style.color = 'green';
+        e.target.reset();
+      } else {
+        msg.textContent = 'Error al enviar. Intenta de nuevo.';
+        msg.style.color = 'red';
+      }
+    });
+  </script>
+</body>
+</html>
