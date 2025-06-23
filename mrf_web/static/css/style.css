@@ -452,3 +452,45 @@ select:focus {
   border-radius: var(--borde-radio);
   box-shadow: var(--sombra-suave);
 }
+.organigrama-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.org-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.org-nodo {
+  background: var(--blanco);
+  border: 2px solid var(--verde-mapa);
+  padding: 1rem;
+  border-radius: var(--borde-radio);
+  min-width: 220px;
+  box-shadow: var(--sombra-suave);
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.nivel-1 {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.nivel-1 .org-nodo {
+  background: var(--verde-mapa);
+  color: white;
+}
+
+.org-linea {
+  width: 80%;
+  height: 2px;
+  background: var(--verde-mapa);
+}
+

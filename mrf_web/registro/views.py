@@ -153,3 +153,30 @@ def eliminar_miembro(request, miembro_id):
         miembro.delete()
     return redirect('formulario_miembros')
 
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import CargoNacional
+from .forms import CargoNacionalForm
+
+@login_required
+def formulario_direccion_nacional(request):
+    if request.method == 'POST':
+        form = CargoNacionalForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('formulario_direccion_nacional')
+    else:
+        form = CargoNacionalForm()
+
+    registros = CargoNacional.objects.order_by('orden')
+    return render(request, 'formulario_direccion_nacional.html', {
+        'form': form,
+        'registros': registros
+    })
+
+@login_required
+def eliminar_cargo_nacional(request, id):
+    cargo = get_object_or_404(CargoNacional, id=id)
+    if request.method == 'POST':
+        cargo.delete()
+    return redirect('formulario_direccion_nacional')

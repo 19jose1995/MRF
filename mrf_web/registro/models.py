@@ -111,3 +111,31 @@ class CargoMunicipal(models.Model):
 
     def __str__(self):
         return f"{self.get_orden_display()} - {self.nombre}"
+    
+    from django.db import models
+
+class CargoNacional(models.Model):
+    CARGOS_CHOICES = [
+        (1, 'Presidente(a)'),
+        (2, 'Vicepresidente(a)'),
+        (3, 'Secretario(a) de Finanzas'),
+        (4, 'Coordinador(a) Operativo(a)'),
+        (5, 'Coordinador(a) Nacional de la Juventud'),
+        (6, 'Coordinador(a) Nacional de Cultos y Organizaciones sin fines de Lucro'),
+        (7, 'Coordinadora Nacional de La Mujer'),
+        (8, 'Coordinador(a) Regional Santo Domingo y Distrito Nacional'),
+        (9, 'Coordinador(a) Regional Región Norte'),
+        (10, 'Coordinador(a) Regional Región Sur'),
+        (11, 'Coordinador(a) Regional Región Este'),
+    ]
+
+    orden = models.PositiveSmallIntegerField(choices=CARGOS_CHOICES, unique=True)
+    nombre = models.CharField(max_length=100)
+    cedula = models.CharField(max_length=20)
+    telefono = models.CharField(max_length=20)
+    email = models.EmailField()
+    oficio = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.get_orden_display()} - {self.nombre}"
+
