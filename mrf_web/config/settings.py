@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-hmg%*o6o_6ivxx2t(65&p*!$1@dilg4d4bm8#@cb86$a5*drpp'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['mrf-wuyd.onrender.com']
 
@@ -54,7 +54,6 @@ CSRF_TRUSTED_ORIGINS = [
     "https://mrf-wuyd.onrender.com",
 ]
 
-
 ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
@@ -76,7 +75,6 @@ import os
 
 TEMPLATES[0]['DIRS'] = [BASE_DIR / "templates"]
 STATICFILES_DIRS = [BASE_DIR / "static"]
-
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
