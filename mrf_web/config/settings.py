@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-hmg%*o6o_6ivxx2t(65&p*!$1@dilg4d4bm8#@cb86$a5*drpp
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['mrf-wuyd.onrender.com','localhost', '82.25.84.38']
+ALLOWED_HOSTS = ['127.0.0.1','localhost','movimientorepublicafuerte.com','www.movimientorepublicafuerte.com']
 
 
 # Application definition
@@ -51,7 +51,9 @@ MIDDLEWARE = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://mrf-wuyd.onrender.com",
+    'https://movimientorepublicafuerte.com',
+    'https://www.movimientorepublicafuerte.com',
+
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -74,7 +76,6 @@ TEMPLATES = [
 import os
 
 TEMPLATES[0]['DIRS'] = [BASE_DIR / "templates"]
-STATICFILES_DIRS = [BASE_DIR / "static"]
 WSGI_APPLICATION = 'config.wsgi.application'
 
 
@@ -124,7 +125,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = '/var/www/mrf_static'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field

@@ -1,0 +1,12 @@
+[0;1;31m×[0m gunicorn_mrf.service - Gunicorn daemon for Movimiento Republica Fuerte
+     Loaded: loaded (]8;;file://srv880044/etc/systemd/system/gunicorn_mrf.service\/etc/systemd/system/gunicorn_mrf.service]8;;\; [0;1;32menabled[0m; preset: [0;1;32menabled[0m)
+     Active: [0;1;31mfailed[0m (Result: exit-code) since Mon 2025-06-23 23:16:14 UTC; 2min 10s ago
+   Duration: 698ms
+ Invocation: 60b05bf1ab1f4295bc193d3529e3c29e
+    Process: 20829 ExecStart=/root/MRF/env/bin/gunicorn --access-logfile - --workers 3 --bind 127.0.0.1:8000 config.wsgi:application [0;1;31m(code=exited, status=3)[0m
+   Main PID: 20829 (code=exited, status=3)
+
+Jun 23 23:16:14 srv880044 systemd[1]: gunicorn_mrf.service: Scheduled restart job, restart counter is at 5.
+Jun 23 23:16:14 srv880044 systemd[1]: [0;1;38:5:185m[0;1;39m[0;1;38:5:185mgunicorn_mrf.service: Start request repeated too quickly.[0m
+Jun 23 23:16:14 srv880044 systemd[1]: [0;1;38:5:185m[0;1;39m[0;1;38:5:185mgunicorn_mrf.service: Failed with result 'exit-code'.[0m
+Jun 23 23:16:14 srv880044 systemd[1]: [0;1;31m[0;1;39m[0;1;31mFailed to start gunicorn_mrf.service - Gunicorn daemon for Movimiento Republica Fuerte.[0m
