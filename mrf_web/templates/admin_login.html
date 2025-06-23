@@ -1,0 +1,144 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Acceso Admin - Movimiento República Fuerte</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- Fuentes y Estilos -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+  <style>
+    :root {
+      --rojo-mrf:     #b63a3a;
+      --verde-mapa:   #2e7d50;
+      --verde-oscuro: #256d45;
+      --azul-oscuro:  #102f41;
+      --azul-marino:  #183d4f;
+      --beige-brazo:  #f5d7b5;
+      --blanco:       #ffffff;
+      --gris-claro:   #f6fdf8;
+      --gris-medio:   #dfe7e3;
+      --gris-oscuro:  #4a4a4a;
+      --texto-oscuro: #1f2937;
+      --sombra-suave: 0 4px 14px rgba(0, 0, 0, 0.05);
+      --borde-radius: 12px;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      background: var(--gris-claro);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .login-box {
+      background: var(--blanco);
+      padding: 2.5rem;
+      border-radius: var(--borde-radius);
+      box-shadow: var(--sombra-suave);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .login-logo {
+      height: 70px;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .login-box h2 {
+      margin-bottom: 1.5rem;
+      color: var(--verde-mapa);
+      font-weight: 700;
+    }
+
+    .login-box label {
+      display: block;
+      text-align: left;
+      margin-bottom: 0.3rem;
+      font-weight: 500;
+      color: var(--texto-oscuro);
+    }
+
+    .login-box input {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      margin-bottom: 1rem;
+      border: 1px solid var(--gris-medio);
+      border-radius: var(--borde-radius);
+      font-size: 1rem;
+    }
+
+    .btn {
+      background: var(--verde-mapa);
+      color: var(--blanco);
+      border: none;
+      padding: 0.7rem 1.5rem;
+      border-radius: var(--borde-radius);
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.3s ease, transform 0.2s ease;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 0.5rem;
+    }
+
+    .btn:hover {
+      background: var(--verde-oscuro);
+      transform: translateY(-2px);
+    }
+
+    .btn--light {
+      background: var(--blanco);
+      color: var(--verde-mapa);
+      border: 2px solid var(--verde-mapa);
+      margin-top: 1rem;
+    }
+
+    .btn--light:hover {
+      background: var(--gris-medio);
+    }
+
+    .error {
+      color: var(--rojo-mrf);
+      margin-top: 1rem;
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="login-box">
+      <img src="{% static 'img/logo-mrf.png' %}" alt="Logo Movimiento República Fuerte" class="login-logo">
+      <h2>Acceso Administrador</h2>
+      <form method="post">
+        {% csrf_token %}
+        <label for="username">Usuario</label>
+        <input type="text" id="username" name="username" required>
+
+        <label for="password">Contraseña</label>
+        <input type="password" id="password" name="password" required>
+
+        <button type="submit" class="btn">Entrar</button>
+      </form>
+
+      <a href="{% url 'index' %}" class="btn btn--light">
+        <i class="fas fa-arrow-left"></i> Volver al inicio
+      </a>
+
+      {% if error %}
+        <p class="error">{{ error }}</p>
+      {% endif %}
+    </div>
+  </main>
+</body>
+</html>

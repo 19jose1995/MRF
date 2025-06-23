@@ -1,0 +1,158 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Dirección Provincial - Movimiento República Fuerte</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <style>
+    .header-prov {
+      background: var(--verde-mapa);
+      color: var(--blanco);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      flex-wrap: wrap;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .header-prov__left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .header-prov__logo {
+      height: 55px;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
+    }
+
+    .header-prov__titulo {
+      font-size: 1.6rem;
+      font-weight: 600;
+    }
+
+    .header-prov__right .btn--light {
+      background: var(--blanco);
+      color: var(--verde-mapa);
+      padding: 0.6rem 1.2rem;
+      border-radius: var(--borde-radio);
+      text-decoration: none;
+      font-weight: 500;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+    .header-prov__right .btn--light:hover {
+      background: var(--gris-medio);
+      transform: translateY(-2px);
+    }
+
+    .formulario-prov-container {
+      max-width: 1100px;
+      margin: 3rem auto;
+      padding: 0 1rem;
+    }
+
+    .formulario-modern {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.2rem;
+    }
+
+    .form-row label {
+      font-weight: 500;
+      color: var(--verde-oscuro);
+      margin-bottom: 0.3rem;
+      display: block;
+    }
+
+    .form-actions {
+      grid-column: 1 / -1;
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    .form-title {
+      text-align: center;
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--verde-mapa);
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .formulario-modern {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header-prov">
+    <div class="header-prov__left">
+      <img src="{% static 'img/logo-mrf.png' %}" alt="Logo Movimiento República Fuerte" class="header-prov__logo">
+      <h1 class="header-prov__titulo">Dirección Provincial</h1>
+    </div>
+    <div class="header-prov__right">
+      <a href="{% url 'panel_admin' %}" class="btn btn--light">
+        <i class="fas fa-arrow-left"></i> Volver al panel
+      </a>
+    </div>
+  </header>
+
+  <main class="formulario-prov-container">
+    <div class="formulario-box">
+      <h2 class="form-title">Formulario Dirección Provincial</h2>
+      <form method="post" class="formulario-modern">
+        {% csrf_token %}
+        <div class="form-row"><label>Provincia</label>{{ form.provincia }}</div>
+        <div class="form-row"><label>Cargo</label>{{ form.orden }}</div>
+        <div class="form-row"><label>Nombre</label>{{ form.nombre }}</div>
+        <div class="form-row"><label>Cédula</label>{{ form.cedula }}</div>
+        <div class="form-row"><label>Teléfono</label>{{ form.telefono }}</div>
+        <div class="form-row"><label>Email</label>{{ form.email }}</div>
+        <div class="form-row"><label>Oficio</label>{{ form.oficio }}</div>
+        <div class="form-actions"><button type="submit" class="btn">Guardar</button></div>
+      </form>
+    </div>
+
+    <div class="tabla-box">
+      <h3 class="form-title">Registros Guardados</h3>
+      <table class="tabla-registros">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Cargo</th>
+            <th>Nombre</th>
+            <th>Cédula</th>
+            <th>Teléfono</th>
+            <th>Email</th>
+            <th>Oficio</th>
+            <th>Provincia</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for reg in registros %}
+            <tr>
+              <td>{{ reg.orden }}</td>
+              <td>{{ reg.get_orden_display }}</td>
+              <td>{{ reg.nombre }}</td>
+              <td>{{ reg.cedula }}</td>
+              <td>{{ reg.telefono }}</td>
+              <td>{{ reg.email }}</td>
+              <td>{{ reg.oficio }}</td>
+              <td>{{ reg.provincia }}</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="8" style="text-align:center;">No hay registros aún.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </main>
+</body>
+</html>

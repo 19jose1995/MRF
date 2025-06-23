@@ -1,0 +1,154 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel de Administración</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <style>
+    .header-prov {
+      background: var(--verde-mapa);
+      color: var(--blanco);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      flex-wrap: wrap;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .header-prov__left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .header-prov__logo {
+      height: 55px;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
+      border-radius: 6px;
+    }
+
+    .header-prov__titulo {
+      font-size: 1.6rem;
+      font-weight: 600;
+    }
+
+    .header-prov__right .btn--light {
+      background: var(--blanco);
+      color: var(--verde-mapa);
+      padding: 0.6rem 1.2rem;
+      border-radius: var(--borde-radio);
+      text-decoration: none;
+      font-weight: 500;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+    .header-prov__right .btn--light:hover {
+      background: var(--gris-medio);
+      transform: translateY(-2px);
+    }
+
+    .panel-admin-container {
+      max-width: 1200px;
+      margin: 3rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .panel-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+
+    .panel-card {
+      background: var(--blanco);
+      border-radius: var(--borde-radio);
+      box-shadow: var(--sombra-suave);
+      padding: 2rem;
+      text-align: center;
+      text-decoration: none;
+      color: var(--texto-oscuro);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .panel-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .panel-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: var(--verde-mapa);
+    }
+
+    .form-title {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--verde-oscuro);
+      margin-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .header-prov {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+
+      .header-prov__titulo {
+        font-size: 1.3rem;
+      }
+
+      .panel-grid {
+        gap: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header-prov">
+    <div class="header-prov__left">
+      <img src="{% static 'img/logo-mrf.png' %}" alt="Logo Movimiento República Fuerte" class="header-prov__logo">
+      <h1 class="header-prov__titulo">Panel de Administración</h1>
+    </div>
+    <div class="header-prov__right">
+      <form action="{% url 'logout' %}" method="post" style="display:inline;">
+  {% csrf_token %}
+  <button type="submit" class="btn btn--light">
+    <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+  </button>
+</form>
+
+    </div>
+  </header>
+
+  <main class="panel-admin-container">
+    <h2 class="form-title">Bienvenido, {{ user.username }}</h2>
+    <div class="panel-grid">
+      <a href="{% url 'formulario_miembros' %}" class="panel-card">
+        <i class="fas fa-user-plus panel-icon"></i>
+        <span>Inscripción de Miembros</span>
+      </a>
+      <a href="{% url 'formulario_direccion_municipal' %}" class="panel-card">
+        <i class="fas fa-city panel-icon"></i>
+        <span>Dirección Municipal</span>
+      </a>
+      <a href="{% url 'formulario_direccion_provincial' %}" class="panel-card">
+        <i class="fas fa-landmark panel-icon"></i>
+        <span>Dirección Provincial</span>
+      </a>
+      <a href="{% url 'resumen_provincial' %}" class="panel-card">
+        <i class="fas fa-list-alt panel-icon"></i>
+        <span>Resumen por Provincia</span>
+      </a>
+    </div>
+  </main>
+</body>
+</html>

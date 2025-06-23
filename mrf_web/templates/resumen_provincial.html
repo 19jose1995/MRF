@@ -1,0 +1,129 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Resumen por Provincia</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    .header-prov {
+      background: var(--verde-mapa);
+      color: var(--blanco);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      flex-wrap: wrap;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .header-prov__left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .header-prov__logo {
+      height: 55px;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
+    }
+
+    .header-prov__titulo {
+      font-size: 1.6rem;
+      font-weight: 600;
+    }
+
+    .header-prov__right .btn--light {
+      background: var(--blanco);
+      color: var(--verde-mapa);
+      padding: 0.6rem 1.2rem;
+      border-radius: var(--borde-radio);
+      text-decoration: none;
+      font-weight: 500;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+
+    .header-prov__right .btn--light:hover {
+      background: var(--gris-medio);
+      transform: translateY(-2px);
+    }
+
+    .formulario-prov-container {
+      max-width: 1000px;
+      margin: 3rem auto;
+      padding: 0 1rem;
+    }
+
+    .prov-card {
+      background: var(--blanco);
+      padding: 2rem;
+      border-radius: var(--borde-radio);
+      box-shadow: var(--sombra-suave);
+      margin-bottom: 2rem;
+    }
+
+    .prov-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--verde-oscuro);
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    .cargo-list {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .cargo-list li {
+      background: var(--gris-claro);
+      border-left: 4px solid var(--verde-mapa);
+      margin-bottom: 0.8rem;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      line-height: 1.5;
+      font-size: 0.97rem;
+    }
+
+    .cargo-list li strong {
+      color: var(--azul-oscuro);
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <header class="header-prov">
+    <div class="header-prov__left">
+      <img src="{% static 'img/logo-mrf.png' %}" alt="Logo Movimiento República Fuerte" class="header-prov__logo">
+      <h1 class="header-prov__titulo">Resumen Provincial</h1>
+    </div>
+    <div class="header-prov__right">
+      <a href="{% url 'panel_admin' %}" class="btn btn--light">
+        <i class="fas fa-arrow-left"></i> Volver al panel
+      </a>
+    </div>
+  </header>
+
+  <main class="formulario-prov-container">
+    {% for provincia, cargos in resumen.items %}
+      <section class="prov-card">
+        <h2 class="prov-title">{{ provincia }}</h2>
+        <ul class="cargo-list">
+          {% for cargo in cargos %}
+            <li>
+              <strong>{{ cargo.get_orden_display }}</strong>
+              {{ cargo.nombre }} — {{ cargo.cedula }} — {{ cargo.telefono }}
+            </li>
+          {% empty %}
+            <li>No hay cargos registrados.</li>
+          {% endfor %}
+        </ul>
+      </section>
+    {% empty %}
+      <p>No hay provincias registradas.</p>
+    {% endfor %}
+  </main>
+</body>
+</html>
