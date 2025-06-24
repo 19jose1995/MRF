@@ -20,6 +20,8 @@ urlpatterns = [
     path('eliminar-miembro/<int:miembro_id>/', views.eliminar_miembro, name='eliminar_miembro'),
     path('direccion-nacional/', views.formulario_direccion_nacional, name='formulario_direccion_nacional'),
     path('eliminar-cargo-nacional/<int:id>/', views.eliminar_cargo_nacional, name='eliminar_cargo_nacional'),
+    path('eliminar-cargo-provincial/<int:id>/', views.eliminar_cargo_provincial, name='eliminar_cargo_provincial'),
+
 
 
 ]

@@ -180,3 +180,10 @@ def eliminar_cargo_nacional(request, id):
     if request.method == 'POST':
         cargo.delete()
     return redirect('formulario_direccion_nacional')
+
+@login_required
+def eliminar_cargo_provincial(request, id):
+    cargo = get_object_or_404(CargoProvincial, id=id)
+    if request.method == 'POST':
+        cargo.delete()
+    return redirect('formulario_direccion_provincial')
