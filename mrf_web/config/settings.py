@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-hmg%*o6o_6ivxx2t(65&p*!$1@dilg4d4bm8#@cb86$a5*drpp'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1','localhost','movimientorepublicafuerte.com','www.movimientorepublicafuerte.com']
 

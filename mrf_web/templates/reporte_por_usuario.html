@@ -1,0 +1,129 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Reporte por Usuario</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <style>
+    .panel-admin-container { max-width: 1200px; margin: 3rem auto; padding: 0 1.5rem; }
+    .reporte-block { background: var(--blanco); border-radius: var(--borde-radio); box-shadow: var(--sombra-suave); padding: 2rem; margin-bottom: 2rem; }
+    .reporte-block h3 { color: var(--verde-oscuro); margin-bottom: 1rem; }
+    .reporte-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    .reporte-table th, .reporte-table td { border: 1px solid #ddd; padding: 0.6rem; font-size: 0.95rem; }
+    .reporte-table th { background-color: var(--gris-claro); text-align: left; }
+    .reporte-table td strong { color: var(--azul-marino); }
+
+    .switch-buttons { display: flex; gap: 1rem; margin-bottom: 1rem; }
+    .switch-buttons a, .pdf-button {
+      background: var(--verde-mapa); color: white; padding: 0.6rem 1.2rem;
+      text-decoration: none; border-radius: var(--borde-radio); font-weight: 500;
+      transition: background 0.3s ease;
+    }
+    .switch-buttons a:hover, .pdf-button:hover { background: var(--verde-oscuro); }
+
+    .header-prov {
+      background: var(--verde-mapa); color: var(--blanco);
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1rem 2rem; flex-wrap: wrap; box-shadow: var(--sombra-suave);
+    }
+    .header-prov__left { display: flex; align-items: center; gap: 1rem; }
+    .header-prov__logo { height: 55px; border-radius: 6px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25)); }
+    .header-prov__titulo { font-size: 1.6rem; font-weight: 600; }
+    .header-prov__right .btn--light {
+      background: var(--blanco); color: var(--verde-mapa); padding: 0.6rem 1.2rem;
+      border-radius: var(--borde-radio); font-weight: 500; border: none;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+    .header-prov__right .btn--light:hover {
+      background: var(--gris-medio); transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <header class="header-prov">
+    <div class="header-prov__left">
+      <img src="{% static 'img/Logo-mrf.png' %}" alt="Logo" class="header-prov__logo">
+      <h1 class="header-prov__titulo">Reporte por Usuario</h1>
+    </div>
+    <div class="header-prov__right">
+      <form action="{% url 'logout' %}" method="post" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn--light"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</button>
+      </form>
+    </div>
+  </header>
+
+  <main class="panel-admin-container">
+    <div class="switch-buttons">
+      <a href="?vista=resumen">Ver resumen</a>
+      <a href="?vista=detalle">Ver detalle</a>      
+    </div>
+
+    {% if vista == "resumen" %}
+      <h2 class="form-title">Resumen por Usuario</h2>
+      {% for usuario in data %}
+        <div class="reporte-block">
+          <h3>{{ usuario.usuario.username }}</h3>
+          <ul>
+            <li><strong>Miembros:</strong> {{ usuario.miembros|length }}</li>
+            <li><strong>Dirección Municipal:</strong> {{ usuario.municipales|length }}</li>
+            <li><strong>Dirección Provincial:</strong> {{ usuario.provinciales|length }}</li>
+            <li><strong>Dirección Nacional:</strong> {{ usuario.nacionales|length }}</li>
+          </ul>
+        </div>
+      {% endfor %}
+    {% else %}
+      <h2 class="form-title">Detalle de Registros por Usuario</h2>
+      {% for usuario in data %}
+        <div class="reporte-block">
+          <h3>{{ usuario.usuario.username }}</h3>
+
+          {% if usuario.miembros %}
+            <h4>Miembros</h4>
+            <table class="reporte-table">
+              <tr><th>Nombre</th><th>Cédula</th><th>Teléfono</th></tr>
+              {% for m in usuario.miembros %}
+                <tr><td>{{ m.nombre }}</td><td>{{ m.cedula }}</td><td>{{ m.telefono }}</td></tr>
+              {% endfor %}
+            </table>
+          {% endif %}
+
+          {% if usuario.municipales %}
+            <h4>Dirección Municipal</h4>
+            <table class="reporte-table">
+              <tr><th>Provincia</th><th>Municipio</th><th>Nombre</th><th>Cargo</th></tr>
+              {% for c in usuario.municipales %}
+                <tr><td>{{ c.provincia }}</td><td>{{ c.municipio }}</td><td>{{ c.nombre }}</td><td>{{ c.get_orden_display }}</td></tr>
+              {% endfor %}
+            </table>
+          {% endif %}
+
+          {% if usuario.provinciales %}
+            <h4>Dirección Provincial</h4>
+            <table class="reporte-table">
+              <tr><th>Provincia</th><th>Nombre</th><th>Cargo</th></tr>
+              {% for c in usuario.provinciales %}
+                <tr><td>{{ c.provincia }}</td><td>{{ c.nombre }}</td><td>{{ c.get_orden_display }}</td></tr>
+              {% endfor %}
+            </table>
+          {% endif %}
+
+          {% if usuario.nacionales %}
+            <h4>Dirección Nacional</h4>
+            <table class="reporte-table">
+              <tr><th>Nombre</th><th>Cargo</th></tr>
+              {% for c in usuario.nacionales %}
+                <tr><td>{{ c.nombre }}</td><td>{{ c.get_orden_display }}</td></tr>
+              {% endfor %}
+            </table>
+          {% endif %}
+        </div>
+      {% endfor %}
+    {% endif %}
+  </main>
+</body>
+</html>

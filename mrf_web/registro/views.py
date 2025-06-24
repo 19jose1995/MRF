@@ -47,7 +47,9 @@ def formulario_direccion_provincial(request):
     if request.method == 'POST':
         form = CargoProvincialForm(request.POST)
         if form.is_valid():
-            form.save()
+            cargo = form.save(commit=False)
+            cargo.creado_por = request.user
+            cargo.save()
             return redirect('formulario_direccion_provincial')
     else:
         form = CargoProvincialForm()
@@ -57,6 +59,7 @@ def formulario_direccion_provincial(request):
         'form': form,
         'registros': registros
     })
+
 
 from django.db.models import Count
 from django.contrib.auth.decorators import login_required
@@ -87,7 +90,9 @@ def formulario_miembros(request):
     if request.method == 'POST':
         form = MiembroForm(request.POST)
         if form.is_valid():
-            form.save()
+            miembro = form.save(commit=False)
+            miembro.creado_por = request.user
+            miembro.save()
             return redirect('formulario_miembros')
     else:
         form = MiembroForm()
@@ -98,12 +103,15 @@ def formulario_miembros(request):
         'miembros': miembros
     })
 
+
 @login_required
 def formulario_direccion_municipal(request):
     if request.method == 'POST':
         form = CargoMunicipalForm(request.POST)
         if form.is_valid():
-            form.save()
+            cargo = form.save(commit=False)
+            cargo.creado_por = request.user
+            cargo.save()
             return redirect('formulario_direccion_municipal')
     else:
         form = CargoMunicipalForm()
@@ -113,6 +121,7 @@ def formulario_direccion_municipal(request):
         'form': form,
         'registros': registros
     })
+
 
 from .forms import MiembroForm
 from django.shortcuts import render, redirect
@@ -163,7 +172,9 @@ def formulario_direccion_nacional(request):
     if request.method == 'POST':
         form = CargoNacionalForm(request.POST)
         if form.is_valid():
-            form.save()
+            cargo = form.save(commit=False)
+            cargo.creado_por = request.user
+            cargo.save()
             return redirect('formulario_direccion_nacional')
     else:
         form = CargoNacionalForm()
@@ -173,7 +184,7 @@ def formulario_direccion_nacional(request):
         'form': form,
         'registros': registros
     })
-
+    
 @login_required
 def eliminar_cargo_nacional(request, id):
     cargo = get_object_or_404(CargoNacional, id=id)
@@ -187,3 +198,42 @@ def eliminar_cargo_provincial(request, id):
     if request.method == 'POST':
         cargo.delete()
     return redirect('formulario_direccion_provincial')
+
+from django.contrib.auth.models import User
+from .models import Miembro, CargoMunicipal, CargoProvincial
+
+from .models import Miembro, CargoMunicipal, CargoProvincial, CargoNacional
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.shortcuts import render
+from .models import Miembro, CargoMunicipal, CargoProvincial, CargoNacional
+
+@login_required
+def reporte_general_por_usuario(request):
+    vista = request.GET.get('vista', 'resumen')  # 'resumen' o 'detalle'
+    usuarios = User.objects.all()
+    data = []
+
+    for user in usuarios:
+        miembros = Miembro.objects.filter(creado_por=user)
+        municipales = CargoMunicipal.objects.filter(creado_por=user)
+        provinciales = CargoProvincial.objects.filter(creado_por=user)
+        nacionales = CargoNacional.objects.filter(creado_por=user)
+
+        if miembros.exists() or municipales.exists() or provinciales.exists() or nacionales.exists():
+            data.append({
+                'usuario': user,
+                'miembros': miembros,
+                'municipales': municipales,
+                'provinciales': provinciales,
+                'nacionales': nacionales,
+            })
+
+    return render(request, 'reporte_por_usuario.html', {
+        'data': data,
+        'vista': vista
+    })

@@ -1,14 +1,7 @@
 from django.db import models
+from django.contrib.auth.models import User  # necesario para el campo creado_por
 
-class Registro(models.Model):
-    nombre = models.CharField(max_length=100)
-    correo = models.EmailField()
-    telefono = models.CharField(max_length=20, blank=True)
-
-    def __str__(self):
-        return self.nombre
-from django.db import models
-
+# Provincias de RD
 PROVINCIAS_RD = [
     ('Azua', 'Azua'),
     ('Bahoruco', 'Bahoruco'),
@@ -44,6 +37,31 @@ PROVINCIAS_RD = [
     ('Valverde', 'Valverde'),
 ]
 
+# Modelo Registro
+class Registro(models.Model):
+    nombre = models.CharField(max_length=100)
+    correo = models.EmailField()
+    telefono = models.CharField(max_length=20, blank=True)
+
+    def __str__(self):
+        return self.nombre
+
+# Modelo Miembro
+class Miembro(models.Model):
+    nombre = models.CharField(max_length=100)
+    cedula = models.CharField(max_length=20)
+    telefono = models.CharField(max_length=20)
+    sector = models.CharField(max_length=100)
+    colegio = models.CharField(max_length=100)
+    email = models.EmailField(blank=True)
+    oficio = models.CharField(max_length=100, blank=True)
+
+    creado_por = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+
+    def __str__(self):
+        return self.nombre
+
+# Modelo Cargo Provincial
 class CargoProvincial(models.Model):
     provincia = models.CharField(max_length=50, choices=PROVINCIAS_RD)
     orden = models.PositiveSmallIntegerField(choices=[
@@ -66,24 +84,12 @@ class CargoProvincial(models.Model):
     email = models.EmailField()
     oficio = models.CharField(max_length=100)
 
+    creado_por = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+
     def __str__(self):
         return f"{self.get_orden_display()} - {self.nombre}"
 
-class Miembro(models.Model):
-    nombre = models.CharField(max_length=100)
-    cedula = models.CharField(max_length=20)
-    telefono = models.CharField(max_length=20)
-    sector = models.CharField(max_length=100)
-    colegio = models.CharField(max_length=100)
-    email = models.EmailField(blank=True)
-    oficio = models.CharField(max_length=100, blank=True)
-
-    def __str__(self):
-        return self.nombre
-
-from django.db import models
-from .models import PROVINCIAS_RD  # usa tu lista de provincias si ya la tienes
-
+# Modelo Cargo Municipal
 class CargoMunicipal(models.Model):
     CARGOS_MUNICIPALES = [
         (1, "PRESIDENTE MUNICIPAL"),
@@ -109,11 +115,12 @@ class CargoMunicipal(models.Model):
     email = models.EmailField(blank=True)
     oficio = models.CharField(max_length=100, blank=True)
 
+    creado_por = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+
     def __str__(self):
         return f"{self.get_orden_display()} - {self.nombre}"
-    
-    from django.db import models
 
+# Modelo Cargo Nacional
 class CargoNacional(models.Model):
     CARGOS_CHOICES = [
         (1, 'Presidente(a)'),
@@ -136,6 +143,7 @@ class CargoNacional(models.Model):
     email = models.EmailField()
     oficio = models.CharField(max_length=100)
 
+    creado_por = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+
     def __str__(self):
         return f"{self.get_orden_display()} - {self.nombre}"
-
