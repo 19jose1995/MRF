@@ -57,6 +57,15 @@
       padding: 0 1rem;
     }
 
+    .formulario-box,
+    .tabla-box {
+      background: var(--gris-claro);
+      padding: 2rem;
+      border-radius: var(--borde-radio);
+      box-shadow: var(--sombra-suave);
+      margin-bottom: 2rem;
+    }
+
     .formulario-modern {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -84,6 +93,52 @@
       margin-bottom: 2rem;
     }
 
+    .search-box {
+      text-align: right;
+      margin-bottom: 1rem;
+    }
+
+    .search-box input {
+      padding: 0.5rem;
+      border: 1px solid var(--gris-medio);
+      border-radius: var(--borde-radio);
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .tabla-wrapper {
+      overflow-x: auto;
+    }
+
+    .tabla-registros {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      table-layout: fixed;
+    }
+
+    .tabla-registros th,
+    .tabla-registros td {
+      padding: 0.5rem 0.6rem;
+      border: 1px solid var(--gris-medio);
+      text-align: left;
+      word-break: break-word;
+    }
+
+    .tabla-registros th {
+      background: var(--verde-mapa);
+      color: white;
+    }
+
+    .btn--small {
+      font-size: 0.8rem;
+      padding: 0.3rem 0.6rem;
+      border-radius: var(--borde-radio);
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+
     @media (max-width: 768px) {
       .formulario-modern {
         grid-template-columns: 1fr;
@@ -106,9 +161,10 @@
 
   <main class="formulario-prov-container">
     <div class="formulario-box">
-      <h2 class="form-title">Formulario Dirección Municipal</h2>
+      <h2 class="form-title">{% if editar_id %}Editar Registro Municipal{% else %}Formulario Dirección Municipal{% endif %}</h2>
       <form method="post" class="formulario-modern">
         {% csrf_token %}
+        <input type="hidden" name="editar_id" value="{{ editar_id }}">
         <div class="form-row"><label>Provincia</label>{{ form.provincia }}</div>
         <div class="form-row">
           <label>Municipio</label>
@@ -133,53 +189,61 @@
       <div class="search-box">
         <input type="text" id="searchInput" onkeyup="filtrarTabla()" placeholder="Buscar por nombre, cédula o cargo...">
       </div>
-      <table class="tabla-registros" id="tablaRegistros">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Cargo</th>
-            <th>Nombre</th>
-            <th>Cédula</th>
-            <th>Teléfono</th>
-            <th>Email</th>
-            <th>Oficio</th>
-            <th>Provincia</th>
-            <th>Municipio</th>
-            <th>Acción</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for reg in registros %}
+      <div class="tabla-wrapper">
+        <table class="tabla-registros" id="tablaRegistros">
+          <thead>
             <tr>
-              <td>{{ reg.orden }}</td>
-              <td>{{ reg.get_orden_display }}</td>
-              <td>{{ reg.nombre }}</td>
-              <td>{{ reg.cedula }}</td>
-              <td>{{ reg.telefono }}</td>
-              <td>{{ reg.email }}</td>
-              <td>{{ reg.oficio }}</td>
-              <td>{{ reg.provincia }}</td>
-              <td>{{ reg.municipio }}</td>
-              <td>
-                <form method="post" action="{% url 'eliminar_cargo_municipal' reg.id %}" onsubmit="return confirm('¿Seguro que deseas eliminar este registro?');">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn--small" style="background: var(--rojo-mrf);">
-                    <i class="fas fa-trash"></i>
-                  </button>
-                </form>
-              </td>
+              <th>#</th>
+              <th>Cargo</th>
+              <th>Nombre</th>
+              <th>Cédula</th>
+              <th>Teléfono</th>
+              <th>Email</th>
+              <th>Oficio</th>
+              <th>Provincia</th>
+              <th>Municipio</th>
+              <th>Acción</th>
             </tr>
-          {% empty %}
-            <tr><td colspan="10" style="text-align:center;">No hay registros aún.</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {% for reg in registros %}
+              <tr>
+                <td>{{ reg.orden }}</td>
+                <td>{{ reg.get_orden_display }}</td>
+                <td>{{ reg.nombre }}</td>
+                <td>{{ reg.cedula }}</td>
+                <td>{{ reg.telefono }}</td>
+                <td>{{ reg.email }}</td>
+                <td>{{ reg.oficio }}</td>
+                <td>{{ reg.provincia }}</td>
+                <td>{{ reg.municipio }}</td>
+                <td>
+                  {% if request.user.is_superuser %}
+                    <div style="display:flex;gap:0.4rem;">
+                      <a href="?editar_id={{ reg.id }}" class="btn btn--small" style="background: var(--verde-oscuro);">
+                        <i class="fas fa-edit"></i>
+                      </a>
+                      <form method="post" action="{% url 'eliminar_cargo_municipal' reg.id %}" onsubmit="return confirm('¿Seguro que deseas eliminar este registro?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn--small" style="background: var(--rojo-mrf);">
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </form>
+                    </div>
+                  {% endif %}
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="10" style="text-align:center;">No hay registros aún.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
   </main>
 
   <script>
-    const municipiosPorProvincia = {
-  "Azua": ["Azua de Compostela", "Estebanía", "Guayabal", "Las Charcas", "Las Yayas de Viajama", "Padre Las Casas", "Peralta", "Pueblo Viejo", "Sabana Yegua", "Tábara Arriba"],
+    const municipiosPorProvincia = { "Azua": ["Azua de Compostela", "Estebanía", "Guayabal", "Las Charcas", "Las Yayas de Viajama", "Padre Las Casas", "Peralta", "Pueblo Viejo", "Sabana Yegua", "Tábara Arriba"],
   "Bahoruco": ["Neiba", "Galván", "Los Ríos", "Tamayo", "Villa Jaragua"],
   "Barahona": ["Barahona", "Cabral", "El Peñón", "Enriquillo", "Fundación", "Jaquimeyes", "La Ciénaga", "Las Salinas", "Paraíso", "Polo", "Vicente Noble"],
   "Dajabón": ["Dajabón", "El Pino", "Loma de Cabrera", "Partido", "Restauración"],
@@ -210,33 +274,48 @@
   "Santiago": ["Santiago de los Caballeros", "Baitoa", "Jánico", "Licey al Medio", "Puñal", "Sabana Iglesia", "San José de las Matas", "Tamboril", "Villa Bisonó (Navarrete)", "Villa González"],
   "Santiago Rodríguez": ["San Ignacio de Sabaneta", "Monción", "Villa Los Almácigos"],
   "Santo Domingo": ["Santo Domingo Este", "Santo Domingo Norte", "Santo Domingo Oeste", "Boca Chica", "Los Alcarrizos", "Pedro Brand", "San Antonio de Guerra", "Bajos de Haina (compartido)"],
-  "Valverde": ["Santa Cruz de Mao", "Esperanza", "Laguna Salada"]
-};
+  "Valverde": ["Santa Cruz de Mao", "Esperanza", "Laguna Salada"]   };
 
-    const provinciaSelect = document.getElementById("id_provincia");
-    const municipioSelect = document.getElementById("municipio");
+  const provinciaSelect = document.getElementById("id_provincia");
+  const municipioSelect = document.getElementById("municipio");
 
-    provinciaSelect.addEventListener("change", () => {
-      const provincia = provinciaSelect.value;
-      const municipios = municipiosPorProvincia[provincia] || [];
-      municipioSelect.innerHTML = '<option value="">Seleccione un municipio</option>';
-      municipios.forEach(m => {
-        const option = document.createElement("option");
-        option.value = m;
-        option.textContent = m;
-        municipioSelect.appendChild(option);
-      });
+  function cargarMunicipiosSeleccionados(provincia, municipioSeleccionado = '') {
+    const municipios = municipiosPorProvincia[provincia] || [];
+    municipioSelect.innerHTML = '<option value="">Seleccione un municipio</option>';
+    municipios.forEach(m => {
+      const option = document.createElement("option");
+      option.value = m;
+      option.textContent = m;
+      if (m === municipioSeleccionado) {
+        option.selected = true;
+      }
+      municipioSelect.appendChild(option);
     });
+  }
 
-    function filtrarTabla() {
-      const input = document.getElementById("searchInput");
-      const filtro = input.value.toLowerCase();
-      const filas = document.querySelectorAll("#tablaRegistros tbody tr");
-      filas.forEach(fila => {
-        const texto = fila.innerText.toLowerCase();
-        fila.style.display = texto.includes(filtro) ? "" : "none";
-      });
+  // Cargar municipios al cambiar la provincia
+  provinciaSelect.addEventListener("change", () => {
+    const provincia = provinciaSelect.value;
+    cargarMunicipiosSeleccionados(provincia);
+  });
+
+  // Preseleccionar municipio si estamos editando
+  document.addEventListener("DOMContentLoaded", () => {
+    const provinciaActual = provinciaSelect.value;
+    const municipioActual = "{{ form.instance.municipio|escapejs }}";
+    if (provinciaActual && municipioActual) {
+      cargarMunicipiosSeleccionados(provinciaActual, municipioActual);
     }
-  </script>
-</body>
-</html>
+  });
+
+  // Buscador de tabla
+  function filtrarTabla() {
+    const input = document.getElementById("searchInput");
+    const filtro = input.value.toLowerCase();
+    const filas = document.querySelectorAll("#tablaRegistros tbody tr");
+    filas.forEach(fila => {
+      const texto = fila.innerText.toLowerCase();
+      fila.style.display = texto.includes(filtro) ? "" : "none";
+    });
+  }
+</script>

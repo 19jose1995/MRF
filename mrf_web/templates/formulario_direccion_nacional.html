@@ -9,6 +9,23 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <style>
+    :root {
+      --verde-mapa: #2e7d50;
+      --verde-oscuro: #256d45;
+      --rojo-mrf: #b63a3a;
+      --blanco: #ffffff;
+      --gris-medio: #dfe7e3;
+      --sombra-suave: 0 4px 14px rgba(0, 0, 0, 0.05);
+      --borde-radio: 12px;
+    }
+
+    body {
+      background: #f6fdf8;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
     .header-prov {
       background: var(--verde-mapa);
       color: var(--blanco);
@@ -19,19 +36,23 @@
       flex-wrap: wrap;
       box-shadow: var(--sombra-suave);
     }
+
     .header-prov__left {
       display: flex;
       align-items: center;
       gap: 1rem;
     }
+
     .header-prov__logo {
       height: 55px;
       filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
     }
+
     .header-prov__titulo {
       font-size: 1.6rem;
       font-weight: 600;
     }
+
     .header-prov__right .btn--light {
       background: var(--blanco);
       color: var(--verde-mapa);
@@ -41,31 +62,45 @@
       font-weight: 500;
       transition: background 0.3s ease, transform 0.3s ease;
     }
+
     .header-prov__right .btn--light:hover {
       background: var(--gris-medio);
       transform: translateY(-2px);
     }
+
     .formulario-prov-container {
-      max-width: 1100px;
+      max-width: 1200px;
       margin: 3rem auto;
       padding: 0 1rem;
     }
+
+    .formulario-box {
+      background: var(--blanco);
+      padding: 2rem;
+      border-radius: var(--borde-radio);
+      box-shadow: var(--sombra-suave);
+      margin-bottom: 3rem;
+    }
+
     .formulario-modern {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 1.2rem;
     }
+
     .form-row label {
       font-weight: 500;
       color: var(--verde-oscuro);
       margin-bottom: 0.3rem;
       display: block;
     }
+
     .form-actions {
       grid-column: 1 / -1;
       text-align: center;
       margin-top: 1rem;
     }
+
     .form-title {
       text-align: center;
       font-size: 1.7rem;
@@ -73,13 +108,46 @@
       color: var(--verde-mapa);
       margin-bottom: 2rem;
     }
-    .search-box input {
+
+    .tabla-box {
+      background: var(--blanco);
+      border-radius: var(--borde-radio);
+      padding: 2rem;
+      box-shadow: var(--sombra-suave);
+      margin: 0 auto;
+      max-width: 100%;
+      overflow-x: auto;
+    }
+
+    .tabla-box input[type="text"] {
       width: 100%;
       padding: 0.5rem 1rem;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
       border-radius: 8px;
       border: 1px solid var(--gris-medio);
+      font-size: 1rem;
     }
+
+    .tabla-registros {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    .tabla-registros th,
+    .tabla-registros td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+      word-break: break-word;
+      vertical-align: top;
+    }
+
+    .tabla-registros th {
+      background: var(--verde-mapa);
+      color: white;
+    }
+
     .btn--small {
       padding: 0.4rem 0.6rem;
       font-size: 0.85rem;
@@ -89,10 +157,20 @@
       cursor: pointer;
       transition: background 0.3s ease, transform 0.3s ease;
     }
+
     .btn--small:hover {
       transform: translateY(-2px);
       opacity: 0.9;
     }
+
+    .btn-editar {
+      background: var(--verde-oscuro);
+    }
+
+    .btn-eliminar {
+      background: var(--rojo-mrf);
+    }
+
     @media (max-width: 768px) {
       .formulario-modern {
         grid-template-columns: 1fr;
@@ -115,9 +193,10 @@
 
   <main class="formulario-prov-container">
     <div class="formulario-box">
-      <h2 class="form-title">Nuevo Cargo Nacional</h2>
+      <h2 class="form-title">{% if editar_id %}Editar Cargo Nacional{% else %}Nuevo Cargo Nacional{% endif %}</h2>
       <form method="post" class="formulario-modern">
         {% csrf_token %}
+        <input type="hidden" name="editar_id" value="{{ editar_id }}">
         <div class="form-row"><label>Cargo</label>{{ form.orden }}</div>
         <div class="form-row"><label>Nombre</label>{{ form.nombre }}</div>
         <div class="form-row"><label>Cédula</label>{{ form.cedula }}</div>
@@ -125,16 +204,14 @@
         <div class="form-row"><label>Email</label>{{ form.email }}</div>
         <div class="form-row"><label>Oficio</label>{{ form.oficio }}</div>
         <div class="form-actions">
-          <button type="submit" class="btn">Guardar</button>
+          <button type="submit" class="btn" style="background: var(--verde-mapa);">Guardar</button>
         </div>
       </form>
     </div>
 
     <div class="tabla-box">
       <h3 class="form-title">Cargos Nacionales Registrados</h3>
-      <form method="get" style="margin-bottom: 1rem;">
-        <input type="text" id="searchInput" placeholder="Buscar por nombre, cédula o cargo..." style="width:100%;padding:0.5rem 1rem;margin-bottom:1rem;border-radius:8px;border:1px solid var(--gris-medio);" onkeyup="filtrarTabla()">
-      </form>
+      <input type="text" id="searchInput" placeholder="Buscar por nombre, cédula o cargo..." onkeyup="filtrarTabla()">
       <table class="tabla-registros" id="tablaRegistros">
         <thead>
           <tr>
@@ -159,10 +236,19 @@
               <td>{{ reg.email }}</td>
               <td>{{ reg.oficio }}</td>
               <td>
-                <form method="post" action="{% url 'eliminar_cargo_nacional' reg.id %}" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este cargo?');">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn--small" style="background: var(--rojo-mrf);"><i class="fas fa-trash"></i></button>
-                </form>
+                {% if request.user.is_superuser %}
+                  <div style="display: flex; gap: 0.4rem;">
+                    <a href="?editar_id={{ reg.id }}" class="btn btn--small btn-editar">
+                      <i class="fas fa-edit"></i>
+                    </a>
+                    <form method="post" action="{% url 'eliminar_cargo_nacional' reg.id %}" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este cargo?');">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn--small btn-eliminar">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </form>
+                  </div>
+                {% endif %}
               </td>
             </tr>
           {% empty %}

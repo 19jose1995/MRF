@@ -77,7 +77,7 @@ class CargoProvincial(models.Model):
         (10, "COORDINADOR SECTOR SALUD"),
         (11, "COORDINADOR DE PROFESIONALES INDEPENDIENTES"),
         (12, "COORDINADOR DE ASUNTOS COMUNITARIOS"),
-    ], unique=True)
+    ])
     nombre = models.CharField(max_length=100)
     cedula = models.CharField(max_length=20)
     telefono = models.CharField(max_length=20)
@@ -105,7 +105,6 @@ class CargoMunicipal(models.Model):
         (11, "COORDINADOR DE PROFESIONALES INDEPENDIENTES"),
         (12, "COORDINADOR DE ASUNTOS COMUNITARIOS"),
     ]
-
     provincia = models.CharField(max_length=50, choices=PROVINCIAS_RD)
     municipio = models.CharField(max_length=100)
     orden = models.PositiveSmallIntegerField(choices=CARGOS_MUNICIPALES, unique=False)
@@ -135,7 +134,6 @@ class CargoNacional(models.Model):
         (10, 'Coordinador(a) Regional Región Sur'),
         (11, 'Coordinador(a) Regional Región Este'),
     ]
-
     orden = models.PositiveSmallIntegerField(choices=CARGOS_CHOICES, unique=True)
     nombre = models.CharField(max_length=100)
     cedula = models.CharField(max_length=20)

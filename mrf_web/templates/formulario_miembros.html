@@ -9,6 +9,23 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <style>
+    :root {
+      --verde-mapa: #2e7d50;
+      --verde-oscuro: #256d45;
+      --rojo-mrf: #b63a3a;
+      --blanco: #ffffff;
+      --gris-medio: #dfe7e3;
+      --sombra-suave: 0 4px 14px rgba(0, 0, 0, 0.05);
+      --borde-radio: 12px;
+    }
+
+    body {
+      background: #f6fdf8;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
     .header-prov {
       background: var(--verde-mapa);
       color: var(--blanco);
@@ -52,9 +69,18 @@
     }
 
     .formulario-prov-container {
-      max-width: 1100px;
+      max-width: 1200px;
       margin: 3rem auto;
       padding: 0 1rem;
+    }
+
+    .formulario-box,
+    .tabla-box {
+      background: var(--blanco);
+      padding: 2rem;
+      border-radius: var(--borde-radio);
+      box-shadow: var(--sombra-suave);
+      margin-bottom: 2rem;
     }
 
     .formulario-modern {
@@ -84,6 +110,53 @@
       margin-bottom: 2rem;
     }
 
+    .search-box {
+      text-align: right;
+      margin-bottom: 1rem;
+    }
+
+    .search-box input {
+      padding: 0.5rem;
+      border: 1px solid var(--gris-medio);
+      border-radius: var(--borde-radio);
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .tabla-wrapper {
+      overflow-x: auto;
+    }
+
+    .tabla-registros {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      table-layout: fixed;
+    }
+
+    .tabla-registros th,
+    .tabla-registros td {
+      padding: 0.5rem 0.6rem;
+      border: 1px solid var(--gris-medio);
+      text-align: left;
+      word-break: break-word;
+    }
+
+    .tabla-registros th {
+      background: var(--verde-mapa);
+      color: white;
+    }
+
+    .btn--small {
+      font-size: 0.8rem;
+      padding: 0.3rem 0.6rem;
+      border-radius: var(--borde-radio);
+      border: none;
+      color: white;
+      cursor: pointer;
+      margin-right: 4px;
+    }
+
     @media (max-width: 768px) {
       .formulario-modern {
         grid-template-columns: 1fr;
@@ -103,6 +176,7 @@
       </a>
     </div>
   </header>
+
   <main class="formulario-prov-container">
     <div class="formulario-box">
       <h2 class="form-title">Nuevo Miembro</h2>
@@ -116,52 +190,73 @@
         <div class="form-row"><label>Email</label>{{ form.email }}</div>
         <div class="form-row"><label>Oficio</label>{{ form.oficio }}</div>
         <div class="form-actions">
-          <button type="submit" class="btn">Guardar</button>
+          <button type="submit" class="btn" style="background: var(--verde-mapa);">Guardar</button>
         </div>
       </form>
     </div>
 
     <div class="tabla-box">
       <h3 class="form-title">Miembros Registrados</h3>
-      <form method="get" style="margin-bottom: 1rem;">
-        <input type="text" name="buscar" placeholder="Buscar miembro..." value="{{ request.GET.buscar }}" style="width:100%;padding:0.5rem 1rem;margin-bottom:1rem;border-radius:8px;border:1px solid var(--gris-medio);">
-      </form>
-      <table class="tabla-registros">
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Cédula</th>
-            <th>Teléfono</th>
-            <th>Sector</th>
-            <th>Colegio</th>
-            <th>Email</th>
-            <th>Oficio</th>
-            <th>Acción</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for m in miembros %}
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Buscar por nombre, cédula o sector..." onkeyup="filtrarTabla()">
+      </div>
+      <div class="tabla-wrapper">
+        <table class="tabla-registros" id="tablaRegistros">
+          <thead>
             <tr>
-              <td>{{ m.nombre }}</td>
-              <td>{{ m.cedula }}</td>
-              <td>{{ m.telefono }}</td>
-              <td>{{ m.sector }}</td>
-              <td>{{ m.colegio }}</td>
-              <td>{{ m.email }}</td>
-              <td>{{ m.oficio }}</td>
-              <td>
-                <form method="post" action="{% url 'eliminar_miembro' m.id %}" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este miembro?');">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn--small" style="background: var(--rojo-mrf);"><i class="fas fa-trash"></i></button>
-                </form>
-              </td>
+              <th>Nombre</th>
+              <th>Cédula</th>
+              <th>Teléfono</th>
+              <th>Sector</th>
+              <th>Colegio</th>
+              <th>Email</th>
+              <th>Oficio</th>
+              <th>Acción</th>
             </tr>
-          {% empty %}
-            <tr><td colspan="8" style="text-align:center;">No hay miembros registrados aún.</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {% for m in miembros %}
+              <tr>
+                <td>{{ m.nombre }}</td>
+                <td>{{ m.cedula }}</td>
+                <td>{{ m.telefono }}</td>
+                <td>{{ m.sector }}</td>
+                <td>{{ m.colegio }}</td>
+                <td>{{ m.email }}</td>
+                <td>{{ m.oficio }}</td>
+                <td>
+                  {% if request.user.is_superuser %}
+                  <a href="{% url 'editar_miembro' m.id %}" class="btn btn--small" style="background: var(--verde-oscuro);">
+                    <i class="fas fa-edit"></i>
+                  </a>
+                  <form method="post" action="{% url 'eliminar_miembro' m.id %}" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este miembro?');" style="display:inline-block;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn--small" style="background: var(--rojo-mrf);">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </form>
+                  {% endif %}
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="8" style="text-align:center;">No hay miembros registrados aún.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
   </main>
+
+  <script>
+    function filtrarTabla() {
+      const input = document.getElementById("searchInput");
+      const filtro = input.value.toLowerCase();
+      const filas = document.querySelectorAll("#tablaRegistros tbody tr");
+      filas.forEach(fila => {
+        const texto = fila.innerText.toLowerCase();
+        fila.style.display = texto.includes(filtro) ? "" : "none";
+      });
+    }
+  </script>
 </body>
 </html>

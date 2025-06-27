@@ -9,6 +9,24 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <style>
+    :root {
+      --verde-mapa: #2e7d50;
+      --verde-oscuro: #256d45;
+      --rojo-mrf: #b63a3a;
+      --blanco: #ffffff;
+      --gris-medio: #dfe7e3;
+      --gris-claro: #f6fdf8;
+      --sombra-suave: 0 4px 14px rgba(0, 0, 0, 0.05);
+      --borde-radio: 12px;
+    }
+
+    body {
+      background: var(--gris-claro);
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
     .header-prov {
       background: var(--verde-mapa);
       color: var(--blanco);
@@ -19,19 +37,23 @@
       flex-wrap: wrap;
       box-shadow: var(--sombra-suave);
     }
+
     .header-prov__left {
       display: flex;
       align-items: center;
       gap: 1rem;
     }
+
     .header-prov__logo {
       height: 55px;
       filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
     }
+
     .header-prov__titulo {
       font-size: 1.6rem;
       font-weight: 600;
     }
+
     .header-prov__right .btn--light {
       background: var(--blanco);
       color: var(--verde-mapa);
@@ -41,31 +63,46 @@
       font-weight: 500;
       transition: background 0.3s ease, transform 0.3s ease;
     }
+
     .header-prov__right .btn--light:hover {
       background: var(--gris-medio);
       transform: translateY(-2px);
     }
+
     .formulario-prov-container {
       max-width: 1100px;
       margin: 3rem auto;
       padding: 0 1rem;
     }
+
+    .formulario-box,
+    .tabla-box {
+      background: var(--gris-claro);
+      padding: 2rem;
+      border-radius: var(--borde-radio);
+      box-shadow: var(--sombra-suave);
+      margin-bottom: 2rem;
+    }
+
     .formulario-modern {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 1.2rem;
     }
+
     .form-row label {
       font-weight: 500;
       color: var(--verde-oscuro);
       margin-bottom: 0.3rem;
       display: block;
     }
+
     .form-actions {
       grid-column: 1 / -1;
       text-align: center;
       margin-top: 1rem;
     }
+
     .form-title {
       text-align: center;
       font-size: 1.7rem;
@@ -73,26 +110,62 @@
       color: var(--verde-mapa);
       margin-bottom: 2rem;
     }
-    .search-box input {
-      width: 100%;
-      padding: 0.5rem 1rem;
+
+    .search-box {
+      text-align: right;
       margin-bottom: 1rem;
-      border-radius: 8px;
+    }
+
+    .search-box input {
+      padding: 0.5rem;
       border: 1px solid var(--gris-medio);
-    }
-    .btn--small {
-      padding: 0.4rem 0.6rem;
-      font-size: 0.85rem;
       border-radius: var(--borde-radio);
+      width: 100%;
+      max-width: 300px;
+    }
+
+    .tabla-wrapper {
+      overflow-x: auto;
+    }
+
+    .tabla-registros {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      table-layout: fixed;
+    }
+
+    .tabla-registros th,
+    .tabla-registros td {
+      padding: 0.5rem 0.6rem;
+      border: 1px solid var(--gris-medio);
+      text-align: left;
+      word-break: break-word;
+    }
+
+    .tabla-registros th {
+      background: var(--verde-mapa);
       color: white;
+    }
+
+    .btn--small {
+      font-size: 0.8rem;
+      padding: 0.3rem 0.6rem;
+      border-radius: var(--borde-radio);
       border: none;
+      color: white;
       cursor: pointer;
-      transition: background 0.3s ease, transform 0.3s ease;
+      margin: 0 2px;
     }
-    .btn--small:hover {
-      transform: translateY(-2px);
-      opacity: 0.9;
+
+    .btn-editar {
+      background: var(--verde-oscuro);
     }
+
+    .btn-eliminar {
+      background: var(--rojo-mrf);
+    }
+
     @media (max-width: 768px) {
       .formulario-modern {
         grid-template-columns: 1fr;
@@ -112,11 +185,13 @@
       </a>
     </div>
   </header>
+
   <main class="formulario-prov-container">
     <div class="formulario-box">
-      <h2 class="form-title">Nuevo Cargo Provincial</h2>
+      <h2 class="form-title">{% if editar_id %}Editar Cargo Provincial{% else %}Nuevo Cargo Provincial{% endif %}</h2>
       <form method="post" class="formulario-modern">
         {% csrf_token %}
+        <input type="hidden" name="editar_id" value="{{ editar_id }}">
         <div class="form-row"><label>Provincia</label>{{ form.provincia }}</div>
         <div class="form-row"><label>Cargo</label>{{ form.orden }}</div>
         <div class="form-row"><label>Nombre</label>{{ form.nombre }}</div>
@@ -125,53 +200,61 @@
         <div class="form-row"><label>Email</label>{{ form.email }}</div>
         <div class="form-row"><label>Oficio</label>{{ form.oficio }}</div>
         <div class="form-actions">
-          <button type="submit" class="btn">Guardar</button>
+          <button type="submit" class="btn" style="background: var(--verde-mapa);">Guardar</button>
         </div>
       </form>
     </div>
 
     <div class="tabla-box">
       <h3 class="form-title">Cargos Provinciales Registrados</h3>
-      <form method="get" style="margin-bottom: 1rem;">
-        <input type="text" id="searchInput" placeholder="Buscar por nombre, cédula o provincia..." style="width:100%;padding:0.5rem 1rem;margin-bottom:1rem;border-radius:8px;border:1px solid var(--gris-medio);" onkeyup="filtrarTabla()">
-      </form>
-      <table class="tabla-registros" id="tablaRegistros">
-        <thead>
-          <tr>
-            <th>Provincia</th>
-            <th>Cargo</th>
-            <th>Nombre</th>
-            <th>Cédula</th>
-            <th>Teléfono</th>
-            <th>Email</th>
-            <th>Oficio</th>
-            <th>Acción</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for reg in registros %}
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Buscar por nombre, cédula o provincia..." onkeyup="filtrarTabla()">
+      </div>
+      <div class="tabla-wrapper">
+        <table class="tabla-registros" id="tablaRegistros">
+          <thead>
             <tr>
-              <td>{{ reg.provincia }}</td>
-              <td>{{ reg.get_orden_display }}</td>
-              <td>{{ reg.nombre }}</td>
-              <td>{{ reg.cedula }}</td>
-              <td>{{ reg.telefono }}</td>
-              <td>{{ reg.email }}</td>
-              <td>{{ reg.oficio }}</td>
-              <td>
-                <form method="post" action="{% url 'eliminar_cargo_provincial' reg.id %}" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este cargo?');">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn--small" style="background: var(--rojo-mrf);"><i class="fas fa-trash"></i></button>
-                </form>
-              </td>
+              <th>Provincia</th>
+              <th>Cargo</th>
+              <th>Nombre</th>
+              <th>Cédula</th>
+              <th>Teléfono</th>
+              <th>Email</th>
+              <th>Oficio</th>
+              <th>Acción</th>
             </tr>
-          {% empty %}
-            <tr><td colspan="8" style="text-align:center;">No hay cargos provinciales registrados aún.</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {% for reg in registros %}
+              <tr>
+                <td>{{ reg.provincia }}</td>
+                <td>{{ reg.get_orden_display }}</td>
+                <td>{{ reg.nombre }}</td>
+                <td>{{ reg.cedula }}</td>
+                <td>{{ reg.telefono }}</td>
+                <td>{{ reg.email }}</td>
+                <td>{{ reg.oficio }}</td>
+                <td>
+                  {% if request.user.is_superuser %}
+                    <div style="display: flex;">
+                      <a href="?editar_id={{ reg.id }}" class="btn btn--small btn-editar"><i class="fas fa-edit"></i></a>
+                      <form method="post" action="{% url 'eliminar_cargo_provincial' reg.id %}" style="display:inline;" onsubmit="return confirm('¿Eliminar este cargo?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn--small btn-eliminar"><i class="fas fa-trash"></i></button>
+                      </form>
+                    </div>
+                  {% endif %}
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="8" style="text-align:center;">No hay cargos provinciales registrados aún.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
   </main>
+
   <script>
     function filtrarTabla() {
       const input = document.getElementById("searchInput");

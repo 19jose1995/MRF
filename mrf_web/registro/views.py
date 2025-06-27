@@ -1,16 +1,30 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.decorators import login_required
-from .forms import CargoMunicipalForm
-from .models import CargoMunicipal
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.db.models import Count
+from .forms import (
+    CargoMunicipalForm, CargoProvincialForm, MiembroForm, CargoNacionalForm
+)
+from .models import (
+    CargoMunicipal, CargoProvincial, CargoNacional, Miembro
+)
+from django.contrib.auth.models import User
 
-
+# --- VISTAS PÚBLICAS ---
 def index(request):
-    return render(request, 'index.html')
+    form = MiembroForm()
+    mensaje = None
+    if request.method == 'POST':
+        form = MiembroForm(request.POST)
+        if form.is_valid():
+            form.save()
+            mensaje = "¡Gracias por registrarte!"
+            form = MiembroForm()
+    return render(request, 'index.html', {'form': form, 'mensaje': mensaje})
 
 def admin_login(request):
     if request.user.is_authenticated:
-        return redirect('panel_admin')  # Redirige si ya está logueado
+        return redirect('panel_admin')
 
     error = None
     if request.method == 'POST':
@@ -25,66 +39,12 @@ def admin_login(request):
 
     return render(request, 'admin_login.html', {'error': error})
 
+# --- PANEL PRINCIPAL ---
 @login_required
 def panel_admin(request):
     return render(request, 'panel_admin.html')
 
-@login_required
-def formulario_miembros(request):
-    return render(request, 'formulario_miembros.html')
-
-@login_required
-def formulario_direccion_municipal(request):
-    return render(request, 'formulario_direccion_municipal.html')
-
-from django.shortcuts import render, redirect
-from .forms import CargoProvincialForm
-from .models import CargoProvincial
-from django.contrib.auth.decorators import login_required
-
-@login_required
-def formulario_direccion_provincial(request):
-    if request.method == 'POST':
-        form = CargoProvincialForm(request.POST)
-        if form.is_valid():
-            cargo = form.save(commit=False)
-            cargo.creado_por = request.user
-            cargo.save()
-            return redirect('formulario_direccion_provincial')
-    else:
-        form = CargoProvincialForm()
-
-    registros = CargoProvincial.objects.order_by('orden')
-    return render(request, 'formulario_direccion_provincial.html', {
-        'form': form,
-        'registros': registros
-    })
-
-
-from django.db.models import Count
-from django.contrib.auth.decorators import login_required
-from .models import CargoProvincial
-from django.shortcuts import render
-
-@login_required
-def resumen_provincial(request):
-    provincias = CargoProvincial.objects.values('provincia') \
-        .annotate(total=Count('id')) \
-        .order_by('provincia')
-
-    cargos_por_provincia = {}
-    for provincia in provincias:
-        nombre = provincia['provincia']
-        cargos = CargoProvincial.objects.filter(provincia=nombre).order_by('orden')
-        cargos_por_provincia[nombre] = cargos
-
-    return render(request, 'resumen_provincial.html', {
-        'cargos_por_provincia': cargos_por_provincia
-    })
-
-from .models import Miembro
-from .forms import MiembroForm
-
+# --- FORMULARIO MIEMBROS ---
 @login_required
 def formulario_miembros(request):
     if request.method == 'POST':
@@ -103,118 +63,128 @@ def formulario_miembros(request):
         'miembros': miembros
     })
 
-
+# --- FORMULARIO MUNICIPAL ---
 @login_required
 def formulario_direccion_municipal(request):
+    editar_id = request.POST.get('editar_id') or request.GET.get('editar_id')
+    if editar_id:
+        instancia = get_object_or_404(CargoMunicipal, id=editar_id)
+    else:
+        instancia = None
+
     if request.method == 'POST':
-        form = CargoMunicipalForm(request.POST)
+        form = CargoMunicipalForm(request.POST, instance=instancia)
         if form.is_valid():
             cargo = form.save(commit=False)
             cargo.creado_por = request.user
             cargo.save()
             return redirect('formulario_direccion_municipal')
     else:
-        form = CargoMunicipalForm()
+        form = CargoMunicipalForm(instance=instancia)
 
     registros = CargoMunicipal.objects.order_by('provincia', 'municipio', 'orden')
     return render(request, 'formulario_direccion_municipal.html', {
         'form': form,
-        'registros': registros
+        'registros': registros,
+        'editar_id': editar_id,
     })
 
-
-from .forms import MiembroForm
-from django.shortcuts import render, redirect
-
-def index(request):
-    form = MiembroForm()
-    mensaje = None
-
+# --- FORMULARIO PROVINCIAL ---
+def formulario_direccion_provincial(request):
+    editar_id = request.GET.get('editar_id')
     if request.method == 'POST':
-        form = MiembroForm(request.POST)
+        editar_id = request.POST.get('editar_id')
+        if editar_id:
+            instancia = get_object_or_404(CargoProvincial, id=editar_id)
+            form = CargoProvincialForm(request.POST, instance=instancia)
+        else:
+            form = CargoProvincialForm(request.POST)
+        
         if form.is_valid():
-            form.save()
-            mensaje = "¡Gracias por registrarte!"
-            form = MiembroForm()  # limpia el formulario
+            cargo = form.save(commit=False)
+            if not editar_id:
+                cargo.creado_por = request.user
+            cargo.save()
+            return redirect('formulario_direccion_provincial')
+    else:
+        if editar_id:
+            instancia = get_object_or_404(CargoProvincial, id=editar_id)
+            form = CargoProvincialForm(instance=instancia)
+        else:
+            form = CargoProvincialForm()
 
-    return render(request, 'index.html', {'form': form, 'mensaje': mensaje})
+    registros = CargoProvincial.objects.order_by('provincia', 'orden')
+    return render(request, 'formulario_direccion_provincial.html', {
+        'form': form,
+        'registros': registros,
+        'editar_id': editar_id,
+    })
 
-from django.shortcuts import get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
-from .models import CargoMunicipal
-
-@login_required
-def eliminar_cargo_municipal(request, id):
-    cargo = get_object_or_404(CargoMunicipal, id=id)
-    if request.method == 'POST':
-        cargo.delete()
-        return redirect('formulario_direccion_municipal')
-    return redirect('formulario_direccion_municipal')
-
-from django.shortcuts import redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from .models import Miembro
-
-@login_required
-def eliminar_miembro(request, miembro_id):
-    if request.method == 'POST':
-        miembro = get_object_or_404(Miembro, id=miembro_id)
-        miembro.delete()
-    return redirect('formulario_miembros')
-
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import CargoNacional
-from .forms import CargoNacionalForm
-
+# --- FORMULARIO NACIONAL ---
 @login_required
 def formulario_direccion_nacional(request):
+    editar_id = request.GET.get('editar_id')
+    cargo_a_editar = None
+
+    if editar_id:
+        cargo_a_editar = get_object_or_404(CargoNacional, id=editar_id)
+        form = CargoNacionalForm(instance=cargo_a_editar)
+    else:
+        form = CargoNacionalForm()
+
     if request.method == 'POST':
-        form = CargoNacionalForm(request.POST)
+        if 'editar_id' in request.POST and request.POST['editar_id']:
+            cargo_a_editar = get_object_or_404(CargoNacional, id=request.POST['editar_id'])
+            form = CargoNacionalForm(request.POST, instance=cargo_a_editar)
+        else:
+            form = CargoNacionalForm(request.POST)
+
         if form.is_valid():
             cargo = form.save(commit=False)
             cargo.creado_por = request.user
             cargo.save()
             return redirect('formulario_direccion_nacional')
-    else:
-        form = CargoNacionalForm()
 
     registros = CargoNacional.objects.order_by('orden')
     return render(request, 'formulario_direccion_nacional.html', {
         'form': form,
-        'registros': registros
+        'registros': registros,
+        'editar_id': editar_id
     })
-    
-@login_required
-def eliminar_cargo_nacional(request, id):
-    cargo = get_object_or_404(CargoNacional, id=id)
+
+# --- SOLO SUPERUSUARIO PUEDE ELIMINAR ---
+@user_passes_test(lambda u: u.is_superuser)
+def eliminar_cargo_municipal(request, id):
+    cargo = get_object_or_404(CargoMunicipal, id=id)
     if request.method == 'POST':
         cargo.delete()
-    return redirect('formulario_direccion_nacional')
+    return redirect('formulario_direccion_municipal')
 
-@login_required
+@user_passes_test(lambda u: u.is_superuser)
 def eliminar_cargo_provincial(request, id):
     cargo = get_object_or_404(CargoProvincial, id=id)
     if request.method == 'POST':
         cargo.delete()
     return redirect('formulario_direccion_provincial')
 
-from django.contrib.auth.models import User
-from .models import Miembro, CargoMunicipal, CargoProvincial
+@user_passes_test(lambda u: u.is_superuser)
+def eliminar_cargo_nacional(request, id):
+    cargo = get_object_or_404(CargoNacional, id=id)
+    if request.method == 'POST':
+        cargo.delete()
+    return redirect('formulario_direccion_nacional')
 
-from .models import Miembro, CargoMunicipal, CargoProvincial, CargoNacional
-from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+@user_passes_test(lambda u: u.is_superuser)
+def eliminar_miembro(request, miembro_id):
+    miembro = get_object_or_404(Miembro, id=miembro_id)
+    if request.method == 'POST':
+        miembro.delete()
+    return redirect('formulario_miembros')
 
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
-from django.shortcuts import render
-from .models import Miembro, CargoMunicipal, CargoProvincial, CargoNacional
-
+# --- REPORTE GENERAL POR USUARIO ---
 @login_required
 def reporte_general_por_usuario(request):
-    vista = request.GET.get('vista', 'resumen')  # 'resumen' o 'detalle'
+    vista = request.GET.get('vista', 'resumen')
     usuarios = User.objects.all()
     data = []
 
@@ -237,3 +207,16 @@ def reporte_general_por_usuario(request):
         'data': data,
         'vista': vista
     })
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def editar_miembro(request, miembro_id):
+    miembro = get_object_or_404(Miembro, id=miembro_id)
+    if request.method == 'POST':
+        form = MiembroForm(request.POST, instance=miembro)
+        if form.is_valid():
+            form.save()
+            return redirect('formulario_miembros')
+    else:
+        form = MiembroForm(instance=miembro)
+    return render(request, 'formulario_miembros.html', {'form': form, 'miembros': Miembro.objects.all(), 'editar': True})

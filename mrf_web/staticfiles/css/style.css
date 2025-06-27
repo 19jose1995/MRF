@@ -539,3 +539,19 @@ select:focus {
     margin-top: 1rem;
   }
 }
+.org-nodo {
+  text-align: center;
+  padding: 1rem;
+  max-width: none !important;
+}
+
+.org-nodo img {
+  width: 160px !important;
+  height: 160px !important;
+  object-fit: cover;
+  border-radius: 50%;
+  margin-bottom: 0.5rem;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
