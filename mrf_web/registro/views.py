@@ -66,21 +66,28 @@ def formulario_miembros(request):
 # --- FORMULARIO MUNICIPAL ---
 @login_required
 def formulario_direccion_municipal(request):
-    editar_id = request.POST.get('editar_id') or request.GET.get('editar_id')
-    if editar_id:
-        instancia = get_object_or_404(CargoMunicipal, id=editar_id)
-    else:
-        instancia = None
+    editar_id = request.GET.get('editar_id') or request.POST.get('editar_id')
+    instancia = None
 
     if request.method == 'POST':
-        form = CargoMunicipalForm(request.POST, instance=instancia)
+        if editar_id and editar_id.isdigit():
+            instancia = get_object_or_404(CargoMunicipal, id=int(editar_id))
+            form = CargoMunicipalForm(request.POST, instance=instancia)
+        else:
+            form = CargoMunicipalForm(request.POST)
+
         if form.is_valid():
             cargo = form.save(commit=False)
-            cargo.creado_por = request.user
+            if not instancia:
+                cargo.creado_por = request.user
             cargo.save()
             return redirect('formulario_direccion_municipal')
     else:
-        form = CargoMunicipalForm(instance=instancia)
+        if editar_id and editar_id.isdigit():
+            instancia = get_object_or_404(CargoMunicipal, id=int(editar_id))
+            form = CargoMunicipalForm(instance=instancia)
+        else:
+            form = CargoMunicipalForm()
 
     registros = CargoMunicipal.objects.order_by('provincia', 'municipio', 'orden')
     return render(request, 'formulario_direccion_municipal.html', {
@@ -89,26 +96,29 @@ def formulario_direccion_municipal(request):
         'editar_id': editar_id,
     })
 
+
 # --- FORMULARIO PROVINCIAL ---
+@login_required
 def formulario_direccion_provincial(request):
-    editar_id = request.GET.get('editar_id')
+    editar_id = request.GET.get('editar_id') or request.POST.get('editar_id')
+    instancia = None
+
     if request.method == 'POST':
-        editar_id = request.POST.get('editar_id')
-        if editar_id:
-            instancia = get_object_or_404(CargoProvincial, id=editar_id)
+        if editar_id and editar_id.isdigit():
+            instancia = get_object_or_404(CargoProvincial, id=int(editar_id))
             form = CargoProvincialForm(request.POST, instance=instancia)
         else:
             form = CargoProvincialForm(request.POST)
         
         if form.is_valid():
             cargo = form.save(commit=False)
-            if not editar_id:
+            if not instancia:
                 cargo.creado_por = request.user
             cargo.save()
             return redirect('formulario_direccion_provincial')
     else:
-        if editar_id:
-            instancia = get_object_or_404(CargoProvincial, id=editar_id)
+        if editar_id and editar_id.isdigit():
+            instancia = get_object_or_404(CargoProvincial, id=int(editar_id))
             form = CargoProvincialForm(instance=instancia)
         else:
             form = CargoProvincialForm()
@@ -123,18 +133,13 @@ def formulario_direccion_provincial(request):
 # --- FORMULARIO NACIONAL ---
 @login_required
 def formulario_direccion_nacional(request):
-    editar_id = request.GET.get('editar_id')
+    editar_id = request.GET.get('editar_id') or request.POST.get('editar_id')
     cargo_a_editar = None
 
-    if editar_id:
-        cargo_a_editar = get_object_or_404(CargoNacional, id=editar_id)
-        form = CargoNacionalForm(instance=cargo_a_editar)
-    else:
-        form = CargoNacionalForm()
-
     if request.method == 'POST':
-        if 'editar_id' in request.POST and request.POST['editar_id']:
-            cargo_a_editar = get_object_or_404(CargoNacional, id=request.POST['editar_id'])
+        # Si editar_id es un número válido, se busca la instancia a editar
+        if editar_id and editar_id.isdigit():
+            cargo_a_editar = get_object_or_404(CargoNacional, id=int(editar_id))
             form = CargoNacionalForm(request.POST, instance=cargo_a_editar)
         else:
             form = CargoNacionalForm(request.POST)
@@ -144,6 +149,12 @@ def formulario_direccion_nacional(request):
             cargo.creado_por = request.user
             cargo.save()
             return redirect('formulario_direccion_nacional')
+    else:
+        if editar_id and editar_id.isdigit():
+            cargo_a_editar = get_object_or_404(CargoNacional, id=int(editar_id))
+            form = CargoNacionalForm(instance=cargo_a_editar)
+        else:
+            form = CargoNacionalForm()
 
     registros = CargoNacional.objects.order_by('orden')
     return render(request, 'formulario_direccion_nacional.html', {
@@ -151,7 +162,7 @@ def formulario_direccion_nacional(request):
         'registros': registros,
         'editar_id': editar_id
     })
-
+    
 # --- SOLO SUPERUSUARIO PUEDE ELIMINAR ---
 @user_passes_test(lambda u: u.is_superuser)
 def eliminar_cargo_municipal(request, id):
