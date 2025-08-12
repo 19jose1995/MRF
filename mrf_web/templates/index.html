@@ -10,15 +10,38 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <style>
-    .foto-cargo {
-      width: 100px;
-      height: 100px;
-      object-fit: cover;
-      border-radius: 50%;
-      margin-bottom: 0.5rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  .video-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .video-box {
+    max-width: 300px;
+    flex: 1 1 280px;
+    background-color: #fff;
+    border: 1px solid var(--gris-medio);
+    border-radius: var(--borde-radio);
+    padding: 0.5rem;
+    box-shadow: var(--sombra-suave);
+  }
+
+  .video-box video {
+    width: 100%;
+    height: auto;
+    border-radius: var(--borde-radio);
+    object-fit: cover;
+  }
+
+  @media (max-width: 600px) {
+    .video-box {
+      max-width: 100%;
     }
-  </style>
+  }
+</style>
+
 </head>
 <script>
   function abrirLightbox(img) {
@@ -31,67 +54,214 @@
   }
 </script>
 <body>
-<header class="header">
+  <header class="header">
   <div class="container header__inner">
     <img src="{% static 'img/Logo-mrf.png' %}" alt="Logo Movimiento República Fuerte" class="logo">
-    <button class="menu-toggle" onclick="document.querySelector('.nav').classList.toggle('nav--open')">
-      <i class="fas fa-bars"></i>
-    </button>
+
+   <!-- Botón de menú hamburguesa -->
+<button class="menu-toggle" onclick="document.querySelector('.nav').classList.toggle('nav--open')">
+  <i class="fas fa-bars"></i>
+</button>
+
+    <!-- Navegación -->
     <nav class="nav">
       <a href="#hero">Inicio</a>
       <a href="#objetivos">Objetivos</a>
       <a href="#sectores">Sectores</a>
       <a href="#estructura">Estructura</a>
       <a href="#accion">Acción</a>
-      <a href="#manifiesto">Manifiesto</a>
+      <a href="#manifiesto">Manifiesto</a>       
       <a href="/admin-login" class="btn btn--small">Acceso Admin</a>
     </nav>
   </div>
 </header>
 
-<main>
-  <section id="hero" class="hero">
-    <div class="hero__decor">
-      <span class="shape shape--1"></span>
-      <span class="shape shape--2"></span>
-      <span class="shape shape--3"></span>
-    </div>
-    <div class="container hero__inner">
-      <div class="hero__titulo-con-logo">
-        <img src="{% static 'img/Logo-mrf.png' %}" alt="Logo MRF" class="hero__logo-titulo">
-      </div>
-      <p class="hero__subtitle">“Leonel es garantía de estabilidad, progreso y futuro para todos los dominicanos.”</p>
-      <a href="#registro" class="btn">Regístrate <i class="fas fa-user-plus"></i></a>
-    </div>
-  </section>
-
-  <!-- OBJETIVOS -->
-  <section id="objetivos" class="section section--beige">
-    <div class="container">
-      <h2 class="section-title">
-        <img src="{% static 'img/Logo-mrf.png' %}" alt="" style="height: 28px; vertical-align: middle; margin-right: 0.5rem;">
-        Nuestros Objetivos
-      </h2>
-      <div class="objetivos-grid">
-        <div class="objetivo-card"><i class="fas fa-bullseye"></i><h3>General</h3><p>Consolidar plataforma multisectorial para desarrollo e institucionalidad democrática.</p></div>
-        <div class="objetivo-card"><i class="fas fa-users"></i><h3>Articular Sectores</h3><p>Unir salud, educación, agro, cultura, profesionales e iglesias en una sola agenda.</p></div>
-        <div class="objetivo-card"><i class="fas fa-bullhorn"></i><h3>Difusión</h3><p>Promover logros y propuestas del presidente Leonel Fernández.</p></div>
-        <div class="objetivo-card"><i class="fas fa-check-square"></i><h3>Movilización</h3><p>Incentivar voto y participación ciudadana en procesos electorales.</p></div>
-        <div class="objetivo-card"><i class="fas fa-map-marker-alt"></i><h3>Capítulos</h3><p>Establecer capítulos provinciales y sectoriales del movimiento.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- DIRECCIÓN NACIONAL CON FOTOS -->
-  <section id="direccion-nacional" class="section section--light">
-    <div class="container">
-      <h2 class="section-title">Dirección Nacional</h2>
-      <div class="organigrama-container">
-        <div class="org-nodo nivel-1">
-          <img src="{% static 'img/elisa-guzman.png' %}" style="width: 300px; height: 300px; border: 2px solid red;" alt="Prueba Imagen">
-          <strong>Presidenta</strong><br>Dra. Elisa Guzmán Ayala
+  <main>
+    <!-- HERO -->
+    <section id="hero" class="hero">
+      <div class="hero__decor">
+        <span class="shape shape--1"></span>
+        <span class="shape shape--2"></span>
+        <span class="shape shape--3"></span>
+      <div class="container hero__inner">
+  <div class="hero__titulo-con-logo">
+    <img src="{% static 'img/Logo-mrf.png' %}" alt="Logo MRF" class="hero__logo-titulo">   
+  </div>
+  <p class="hero__subtitle">
+    “Leonel es garantía de estabilidad, progreso y futuro para todos los dominicanos.”
+  </p>
+  <a href="#registro" class="btn">
+    Regístrate <i class="fas fa-user-plus"></i>
+  </a>
+</div>
+    </section>
+    <!-- OBJETIVOS -->
+    <section id="objetivos" class="section section--beige">
+      <div class="container">
+        <h2 class="section-title">
+          <img src="{% static 'img/Logo-mrf.png' %}" alt="" style="height: 28px; vertical-align: middle; margin-right: 0.5rem;">
+          Nuestros Objetivos
+        </h2>
+        <div class="objetivos-grid">
+          <div class="objetivo-card">
+            <i class="fas fa-bullseye"></i>
+            <h3>General</h3>
+            <p>Consolidar plataforma multisectorial para desarrollo e institucionalidad democrática.</p>
+          </div>
+          <div class="objetivo-card">
+            <i class="fas fa-users"></i>
+            <h3>Articular Sectores</h3>
+            <p>Unir salud, educación, agro, cultura, profesionales e iglesias en una sola agenda.</p>
+          </div>
+          <div class="objetivo-card">
+            <i class="fas fa-bullhorn"></i>
+            <h3>Difusión</h3>
+            <p>Promover logros y propuestas del presidente Leonel Fernández.</p>
+          </div>
+          <div class="objetivo-card">
+            <i class="fas fa-check-square"></i>
+            <h3>Movilización</h3>
+            <p>Incentivar voto y participación ciudadana en procesos electorales.</p>
+          </div>
+          <div class="objetivo-card">
+            <i class="fas fa-map-marker-alt"></i>
+            <h3>Capítulos</h3>
+            <p>Establecer capítulos provinciales y sectoriales del movimiento.</p>
+          </div>
         </div>
-  </section>
+      </div>
+    </section>
+<!-- DIRECCIÓN NACIONAL -->
+<section id="direccion-nacional" class="section section--light">
+  <div class="container">
+    <h2 class="section-title">Dirección Nacional</h2>
+
+    <style>
+      .organigrama-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+      }
+
+      .tarjeta-presidenta {
+        max-width: 340px;
+        background-color: white;
+        border-radius: 16px;
+        padding: 1rem;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        text-align: center;
+      }
+
+      .tarjeta-presidenta img {
+        width: 100%;
+        max-height: 250px;
+        object-fit: cover;
+        border-radius: 12px;
+        border: 3px solid #2e7d50;
+      }
+
+      .tarjeta-presidenta h3 {
+        margin-top: 1rem;
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #102f41;
+      }
+
+      .tarjeta-presidenta p {
+        font-weight: 600;
+        color: #1f2937;
+        margin: 0.2rem 0;
+      }
+
+      .org-linea {
+        width: 100%;
+        height: 2px;
+        background-color: #ccc;
+      }
+
+      .org-row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+      }
+
+      .org-nodo {
+        max-width: 220px;
+        background-color: #ffffff;
+        border: 1px solid #dfe7e3;
+        border-radius: 12px;
+        padding: 1rem;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      }
+
+      .org-nodo strong {
+        display: block;
+        font-weight: bold;
+        color: #183d4f;
+        margin-bottom: 0.3rem;
+      }
+
+      @media (max-width: 500px) {
+        .tarjeta-presidenta {
+          max-width: 90%;
+        }
+        .org-nodo {
+          max-width: 100%;
+        }
+      }
+    </style>
+
+    <div class="organigrama-container">
+      <!-- Nivel 1: Presidenta -->
+      <div class="tarjeta-presidenta">
+        <img src="{% static 'img/elisa-guzman.jpg' %}" alt="Presidenta Elisa Guzmán">
+        <h3>Presidenta</h3>
+        <p>Dra. Elisa Guzmán Ayala</p>
+      </div>
+
+      <div class="org-linea"></div>
+
+      <!-- Nivel 2 -->
+      <div class="org-row nivel-2">
+        <div class="org-nodo">
+          <strong>Vicepresidenta</strong>
+          Dra. Yohanna Leyba
+        </div>
+        <div class="org-nodo">
+          <strong>Secretario de Finanzas</strong>
+          Lic. Alberto Feliz
+        </div>
+      </div>
+
+      <div class="org-linea"></div>
+
+      <!-- Nivel 3 -->
+      <div class="org-row nivel-3">
+        <div class="org-nodo">
+          <strong>Coordinador Operativo</strong>
+          Lic. Nelson Paula Mieses
+        </div>
+      </div>
+
+      <div class="org-linea"></div>
+
+      <!-- Nivel 4: Coordinaciones Nacionales con persona -->
+      <div class="org-row nivel-4">
+        <div class="org-nodo">
+          <strong>Coord. Nacional de Cultos y ONGs</strong>
+          Pastor Leonel Guillen
+        </div>
+        <div class="org-nodo">
+          <strong>Coord. Nacional de Protocolos y Eventos</strong>
+          Lic. Paola Sanchez
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
     <!-- SECTORES -->
     <section id="sectores" class="section section--dark">
       <div class="container">
@@ -109,6 +279,7 @@
         </div>
       </div>
     </section>
+
     <!-- ESTRUCTURA -->
     <section id="estructura" class="section section--light">
       <div class="container">
@@ -177,7 +348,41 @@
         </ul>
       </div>
     </section>
-    <section id="galeria" class="section">
+    <!-- VIDEOS -->
+<section id="videos" class="section section--light">
+  <div class="container">
+    <h2 class="section-title" style="text-align: center;">Nuestros Videos</h2>
+    <div class="video-grid">
+      <div class="video-box">
+        <video autoplay muted loop playsinline>
+          <source src="{% static 'videos/video1.mp4' %}" type="video/mp4">
+        </video>
+      </div>
+      <div class="video-box">
+        <video autoplay muted loop playsinline>
+          <source src="{% static 'videos/video2.mp4' %}" type="video/mp4">
+        </video>
+      </div>
+      <div class="video-box">
+        <video autoplay muted loop playsinline>
+          <source src="{% static 'videos/video3.mp4' %}" type="video/mp4">
+        </video>
+      </div>
+      <div class="video-box">
+        <video autoplay muted loop playsinline>
+          <source src="{% static 'videos/video4.mp4' %}" type="video/mp4">
+        </video>
+      </div>
+      <div class="video-box">
+        <video autoplay muted loop playsinline>
+          <source src="{% static 'videos/video6.mp4' %}" type="video/mp4">
+        </video>           
+      </div>
+    </div>
+  </div>
+</section>
+
+  <section id="galeria" class="section">
   <div class="container">
     <h2 class="section-title">Nuestras obras</h2>
     <div class="galeria">
@@ -194,6 +399,13 @@
       <img src="{% static 'img/foto11.jpg' %}" alt="Imagen 3" onclick="abrirLightbox(this)">
       <img src="{% static 'img/foto12.jpg' %}" alt="Imagen 3" onclick="abrirLightbox(this)">
       <img src="{% static 'img/foto13.jpg' %}" alt="Imagen 3" onclick="abrirLightbox(this)">
+      <img src="{% static 'img/foto14.jpg' %}" alt="Imagen 3" onclick="abrirLightbox(this)">
+      <img src="{% static 'img/foto15.jpg' %}" alt="Imagen 3" onclick="abrirLightbox(this)">
+      <img src="{% static 'img/foto16.jpg' %}" alt="Imagen 3" onclick="abrirLightbox(this)">
+      <img src="{% static 'img/foto17.jpg' %}" alt="Imagen 3" onclick="abrirLightbox(this)">
+      <img src="{% static 'img/foto18.jpg' %}" alt="Imagen 3" onclick="abrirLightbox(this)">
+      <img src="{% static 'img/foto19.jpg' %}" alt="Imagen 3" onclick="abrirLightbox(this)">
+      <img src="{% static 'img/foto19.jpg' %}" alt="Imagen 3" onclick="abrirLightbox(this)">
 
     </div>
   </div>

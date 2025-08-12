@@ -1,0 +1,398 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Movimiento República Fuerte: plataforma multisectorial de apoyo al presidente Leonel Fernández." />
+  <title>Movimiento República Fuerte</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<script>
+  function abrirLightbox(img) {
+    const lightbox = document.getElementById('lightbox');
+    lightbox.querySelector('img').src = img.src;
+    lightbox.classList.add('active');
+  }
+  function cerrarLightbox() {
+    document.getElementById('lightbox').classList.remove('active');
+  }
+</script>
+<body>
+  <header class="header">
+  <div class="container header__inner">
+    <img src="{% static 'img/Logo-mrf.png' %}" alt="Logo Movimiento República Fuerte" class="logo">
+
+   <!-- Botón de menú hamburguesa -->
+<button class="menu-toggle" onclick="document.querySelector('.nav').classList.toggle('nav--open')">
+  <i class="fas fa-bars"></i>
+</button>
+
+    <!-- Navegación -->
+    <nav class="nav">
+      <a href="#hero">Inicio</a>
+      <a href="#objetivos">Objetivos</a>
+      <a href="#sectores">Sectores</a>
+      <a href="#estructura">Estructura</a>
+      <a href="#accion">Acción</a>
+      <a href="#manifiesto">Manifiesto</a>       
+      <a href="/admin-login" class="btn btn--small">Acceso Admin</a>
+    </nav>
+  </div>
+</header>
+
+  <main>
+    <!-- HERO -->
+    <section id="hero" class="hero">
+      <div class="hero__decor">
+        <span class="shape shape--1"></span>
+        <span class="shape shape--2"></span>
+        <span class="shape shape--3"></span>
+      <div class="container hero__inner">
+  <div class="hero__titulo-con-logo">
+    <img src="{% static 'img/Logo-mrf.png' %}" alt="Logo MRF" class="hero__logo-titulo">   
+  </div>
+  <p class="hero__subtitle">
+    “Leonel es garantía de estabilidad, progreso y futuro para todos los dominicanos.”
+  </p>
+  <a href="#registro" class="btn">
+    Regístrate <i class="fas fa-user-plus"></i>
+  </a>
+</div>
+    </section>
+    <!-- OBJETIVOS -->
+    <section id="objetivos" class="section section--beige">
+      <div class="container">
+        <h2 class="section-title">
+          <img src="{% static 'img/Logo-mrf.png' %}" alt="" style="height: 28px; vertical-align: middle; margin-right: 0.5rem;">
+          Nuestros Objetivos
+        </h2>
+        <div class="objetivos-grid">
+          <div class="objetivo-card">
+            <i class="fas fa-bullseye"></i>
+            <h3>General</h3>
+            <p>Consolidar plataforma multisectorial para desarrollo e institucionalidad democrática.</p>
+          </div>
+          <div class="objetivo-card">
+            <i class="fas fa-users"></i>
+            <h3>Articular Sectores</h3>
+            <p>Unir salud, educación, agro, cultura, profesionales e iglesias en una sola agenda.</p>
+          </div>
+          <div class="objetivo-card">
+            <i class="fas fa-bullhorn"></i>
+            <h3>Difusión</h3>
+            <p>Promover logros y propuestas del presidente Leonel Fernández.</p>
+          </div>
+          <div class="objetivo-card">
+            <i class="fas fa-check-square"></i>
+            <h3>Movilización</h3>
+            <p>Incentivar voto y participación ciudadana en procesos electorales.</p>
+          </div>
+          <div class="objetivo-card">
+            <i class="fas fa-map-marker-alt"></i>
+            <h3>Capítulos</h3>
+            <p>Establecer capítulos provinciales y sectoriales del movimiento.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+<!-- DIRECCIÓN NACIONAL -->
+<section id="direccion-nacional" class="section section--light">
+  <div class="container">
+    <h2 class="section-title">Dirección Nacional</h2>
+
+    <style>
+      .organigrama-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+      }
+
+      .tarjeta-presidenta {
+        max-width: 340px;
+        background-color: white;
+        border-radius: 16px;
+        padding: 1rem;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        text-align: center;
+      }
+
+      .tarjeta-presidenta img {
+  width: 100%;
+  max-height: 250px; /* antes: 400px */
+  object-fit: cover;
+  border-radius: 12px;
+  border: 3px solid #2e7d50;
+}
+
+
+      .tarjeta-presidenta h3 {
+        margin-top: 1rem;
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #102f41;
+      }
+
+      .tarjeta-presidenta p {
+        font-weight: 600;
+        color: #1f2937;
+        margin: 0.2rem 0;
+      }
+
+      .org-linea {
+        width: 100%;
+        height: 2px;
+        background-color: #ccc;
+      }
+
+      .org-row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+      }
+
+      .org-nodo {
+        max-width: 200px;
+        background-color: #ffffff;
+        border: 1px solid #dfe7e3;
+        border-radius: 12px;
+        padding: 1rem;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      }
+
+      .org-nodo strong {
+        display: block;
+        font-weight: bold;
+        color: #183d4f;
+        margin-bottom: 0.3rem;
+      }
+
+      @media (max-width: 500px) {
+        .tarjeta-presidenta {
+          max-width: 90%;
+        }
+        .org-nodo {
+          max-width: 100%;
+        }
+      }
+    </style>
+
+    <div class="organigrama-container">
+      <!-- Presidenta -->
+      <div class="tarjeta-presidenta">
+        <img src="{% static 'img/elisa-guzman.jpg' %}" alt="Presidenta Elisa Guzmán">
+        <h3>Presidenta</h3>
+        <p>Dra. Elisa Guzmán Ayala</p>
+      </div>
+
+      <div class="org-linea"></div>
+
+      <!-- Nivel 2 -->
+      <div class="org-row nivel-2">
+        <div class="org-nodo">
+          <strong>Vicepresidenta</strong>
+          Dra. Yohanna Leyba
+        </div>
+        <div class="org-nodo">
+          <strong>Secretario de Finanzas</strong>
+          Lic. Alberto Feliz
+        </div>
+      </div>
+
+      <div class="org-linea"></div>
+
+      <!-- Nivel 3 (solo con nombre) -->
+      <div class="org-row nivel-3">
+        <div class="org-nodo">
+          <strong>Coordinador Operativo</strong>
+          Lic. Nelson Paula Mieses
+        </div>
+        <div class="org-nodo">
+          <strong>Coord. Cultos y ONGs</strong>
+          Pastor Leonel Guillen
+        </div>
+        <div class="org-nodo">
+          <strong>Coord. Protocolos y Eventos</strong>
+          Lic. Paola Sanchez
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+    <!-- SECTORES -->
+    <section id="sectores" class="section section--dark">
+      <div class="container">
+        <h2 class="section-title">Sectores a Incluir</h2>
+        <div class="cards">
+          <div class="small-card"><i class="fas fa-hand-holding-medical"></i><p>Salud</p></div>
+          <div class="small-card"><i class="fas fa-briefcase"></i><p>Empresarial</p></div>
+          <div class="small-card"><i class="fas fa-school"></i><p>Educación</p></div>
+          <div class="small-card"><i class="fas fa-child"></i><p>Juventud</p></div>
+          <div class="small-card"><i class="fas fa-female"></i><p>Mujeres</p></div>
+          <div class="small-card"><i class="fas fa-tractor"></i><p>Campo/Agricultura</p></div>
+          <div class="small-card"><i class="fas fa-futbol"></i><p>Cultura y Deportes</p></div>
+          <div class="small-card"><i class="fas fa-gavel"></i><p>Profesionales liberales</p></div>
+          <div class="small-card"><i class="fas fa-church"></i><p>Iglesias y organizaciones</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ESTRUCTURA -->
+    <section id="estructura" class="section section--light">
+      <div class="container">
+        <h2 class="section-title">Estructura Organizativa</h2>
+        <div class="cards-structure">
+          <div class="structure-card">
+            <i class="fas fa-sitemap structure-card__icon"></i>
+            <h3>Comité Nacional Coordinador</h3>
+            <p>Dirige y articula la estrategia general del movimiento.</p>
+          </div>
+          <div class="structure-card">
+            <i class="fas fa-users-cog structure-card__icon"></i>
+            <h3>Coordinaciones Sectoriales</h3>
+            <p>Representan a los sectores claves y coordinan sus acciones.</p>
+          </div>
+          <div class="structure-card">
+            <i class="fas fa-globe-americas structure-card__icon"></i>
+            <h3>Capítulos Provinciales y Municipales</h3>
+            <p>Implementan la estrategia localmente en todo el país.</p>
+          </div>
+          <div class="structure-card">
+            <i class="fas fa-bullhorn structure-card__icon"></i>
+            <h3>Equipo de Comunicación y Redes</h3>
+            <p>Difunde el mensaje y coordina campañas digitales y de prensa.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  <!-- FORMULARIO DE REGISTRO PÚBLICO -->
+    <section id="registro" class="section section--light">
+      <div class="container">
+        <h2 class="section-title">
+          <i class="fas fa-user-plus"></i> Formulario de Registro Público
+        </h2>
+        <div class="formulario-publico-box">
+          <form method="post" class="formulario-modern">
+            {% csrf_token %}
+            <div class="form-row"><label>Nombre</label>{{ form.nombre }}</div>
+            <div class="form-row"><label>Cédula</label>{{ form.cedula }}</div>
+            <div class="form-row"><label>Teléfono</label>{{ form.telefono }}</div>
+            <div class="form-row"><label>Sector</label>{{ form.sector }}</div>
+            <div class="form-row"><label>Colegio Electoral</label>{{ form.colegio }}</div>
+            <div class="form-row"><label>Email</label>{{ form.email }}</div>
+            <div class="form-row"><label>Oficio</label>{{ form.oficio }}</div>
+            <div class="form-actions">
+              <button type="submit" class="btn">Registrarme</button>
+            </div>
+          </form>
+          {% if mensaje %}
+            <p class="success-msg">{{ mensaje }}</p>
+          {% endif %}
+        </div>
+      </div>
+    </section>
+
+    <!-- ACCIÓN -->
+    <section id="accion" class="section estrategia">
+      <div class="container">
+        <h2 class="section-title">Líneas Estratégicas de Acción</h2>
+        <ul>
+          <li>Diálogos sectoriales: encuentros con líderes de sectores clave.</li>
+          <li>Foros ciudadanos: eventos abiertos para escuchar propuestas e inquietudes.</li>
+          <li>Campañas en redes sociales con mensajes, logros y testimonios.</li>
+          <li>Voluntariado activo con jóvenes y ciudadanos comprometidos.</li>
+          <li>Alianzas estratégicas con ONGs, gremios y movimientos afines.</li>
+        </ul>
+      </div>
+    </section>
+    <section id="galeria" class="section">
+  <div class="container">
+    <h2 class="section-title">Nuestras obras</h2>
+    <div class="galeria">
+      <img src="{% static 'img/foto1.jpg' %}" alt="Imagen 1" onclick="abrirLightbox(this)">
+      <img src="{% static 'img/foto2.jpg' %}" alt="Imagen 2" onclick="abrirLightbox(this)">
+      <img src="{% static 'img/foto3.jpg' %}" alt="Imagen 3" onclick="abrirLightbox(this)">
+      <img src="{% static 'img/foto4.jpg' %}" alt="Imagen 3" onclick="abrirLightbox(this)">
+      <img src="{% static 'img/foto5.jpg' %}" alt="Imagen 3" onclick="abrirLightbox(this)">
+      <img src="{% static 'img/foto6.jpg' %}" alt="Imagen 3" onclick="abrirLightbox(this)">
+      <img src="{% static 'img/foto7.jpg' %}" alt="Imagen 3" onclick="abrirLightbox(this)">
+      <img src="{% static 'img/foto8.jpg' %}" alt="Imagen 3" onclick="abrirLightbox(this)">
+      <img src="{% static 'img/foto9.jpg' %}" alt="Imagen 3" onclick="abrirLightbox(this)">
+      <img src="{% static 'img/foto10.jpg' %}" alt="Imagen 3" onclick="abrirLightbox(this)">
+      <img src="{% static 'img/foto11.jpg' %}" alt="Imagen 3" onclick="abrirLightbox(this)">
+      <img src="{% static 'img/foto12.jpg' %}" alt="Imagen 3" onclick="abrirLightbox(this)">
+      <img src="{% static 'img/foto13.jpg' %}" alt="Imagen 3" onclick="abrirLightbox(this)">
+
+    </div>
+  </div>
+</section>
+
+<div class="galeria-lightbox" id="lightbox" onclick="cerrarLightbox()">
+  <img src="" alt="Ampliada">
+</div>
+
+
+    <!-- MANIFIESTO -->
+    <section id="manifiesto" class="section manifiesto">
+      <div class="container">
+        <h2 class="section-title">Manifiesto Político</h2>
+        <blockquote>
+          "Leonel es garantía de estabilidad, progreso y futuro para todos los dominicanos. Construyamos juntos una nación más justa y próspera."
+        </blockquote>
+        <ul>
+          <li>Leonel Fernández ha demostrado ser un líder con visión de Estado.</li>
+          <li>La República Dominicana necesita una conducción con experiencia y diálogo.</li>
+          <li>Apoyamos un desarrollo basado en educación, salud y oportunidades.</li>
+          <li>Comprometidos con una nueva mayoría social representativa y participativa.</li>
+          <li>Llevaremos el mensaje de unidad y liderazgo a cada rincón del país.</li>
+        </ul>
+        <p><strong>¡Por la justicia social!<br>¡Por la soberanía nacional!<br>¡Por el progreso con dignidad!<br>¡Con Leonel, siempre adelante!</strong></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">© 2025 Movimiento República Fuerte</div>
+    <a href="https://instagram.com/movimiento_republica_fuerte" target="_blank" class="instagram-btn">
+  <i class="fab fa-instagram"></i> Síguenos en Instagram
+</a>
+
+  </footer>
+
+  <script>
+    document.getElementById('regForm')?.addEventListener('submit', async e => {
+      e.preventDefault();
+      const data = {
+        name: e.target.name.value,
+        cedula: e.target.cedula.value,
+        phone: e.target.phone.value,
+        sector: e.target.sector.value,
+        colegio: e.target.colegio.value,
+        email: e.target.email.value,
+        oficio: e.target.oficio.value
+      };
+      const res = await fetch('/api/register', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(data)
+      });
+      const msg = document.getElementById('formMessage');
+      if (res.ok) {
+        msg.textContent = '¡Registro enviado! Gracias.';
+        msg.style.color = 'green';
+        e.target.reset();
+      } else {
+        msg.textContent = 'Error al enviar. Intenta de nuevo.';
+        msg.style.color = 'red';
+      }
+    });
+  </script>
+</body>
+</html>

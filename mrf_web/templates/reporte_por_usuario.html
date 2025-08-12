@@ -3,27 +3,23 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Reporte por Usuario</title>
+  <title>Reporte General</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <link rel="stylesheet" href="{% static 'css/style.css' %}">
   <style>
+    body { font-family: 'Poppins', sans-serif; background: var(--gris-claro); margin: 0; }
     .panel-admin-container { max-width: 1200px; margin: 3rem auto; padding: 0 1.5rem; }
-    .reporte-block { background: var(--blanco); border-radius: var(--borde-radio); box-shadow: var(--sombra-suave); padding: 2rem; margin-bottom: 2rem; }
-    .reporte-block h3 { color: var(--verde-oscuro); margin-bottom: 1rem; }
-    .reporte-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-    .reporte-table th, .reporte-table td { border: 1px solid #ddd; padding: 0.6rem; font-size: 0.95rem; }
-    .reporte-table th { background-color: var(--gris-claro); text-align: left; }
-    .reporte-table td strong { color: var(--azul-marino); }
 
-    .switch-buttons { display: flex; gap: 1rem; margin-bottom: 1rem; }
-    .switch-buttons a, .pdf-button {
-      background: var(--verde-mapa); color: white; padding: 0.6rem 1.2rem;
-      text-decoration: none; border-radius: var(--borde-radio); font-weight: 500;
-      transition: background 0.3s ease;
-    }
-    .switch-buttons a:hover, .pdf-button:hover { background: var(--verde-oscuro); }
+    .reporte-block { background: var(--blanco); border-radius: var(--borde-radio); box-shadow: var(--sombra-suave); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; }
+    .reporte-block h3 { color: var(--verde-oscuro); margin-bottom: 1rem; }
+
+    .reporte-table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+    .reporte-table thead th { background-color: var(--verdoscuro, var(--verde-mapa)); color: var(--blanco); padding: 0.75rem; text-align: left; }
+    .reporte-table th, .reporte-table td { border: 1px solid #ddd; padding: 0.7rem; font-size: 0.95rem; }
+    .reporte-table tbody tr:nth-child(even) { background-color: var(--gris-medio); }
+    .reporte-table tbody tr:hover { background-color: var(--gris-claro); }
 
     .header-prov {
       background: var(--verde-mapa); color: var(--blanco);
@@ -31,99 +27,213 @@
       padding: 1rem 2rem; flex-wrap: wrap; box-shadow: var(--sombra-suave);
     }
     .header-prov__left { display: flex; align-items: center; gap: 1rem; }
-    .header-prov__logo { height: 55px; border-radius: 6px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25)); }
+    .header-prov__logo { height: 55px; border-radius: 6px; }
     .header-prov__titulo { font-size: 1.6rem; font-weight: 600; }
+    .header-prov__right { display: flex; gap: 0.5rem; }
     .header-prov__right .btn--light {
       background: var(--blanco); color: var(--verde-mapa); padding: 0.6rem 1.2rem;
       border-radius: var(--borde-radio); font-weight: 500; border: none;
       transition: background 0.3s ease, transform 0.3s ease;
     }
-    .header-prov__right .btn--light:hover {
-      background: var(--gris-medio); transform: translateY(-2px);
+    .header-prov__right .btn--light:hover { background: var(--gris-medio); transform: translateY(-2px); }
+
+    /* Tarjetas totales clicables */
+    .totales-wrap {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(140px, 1fr));
+      gap: 1rem;
+      margin: 1.2rem 0 1.6rem;
     }
+    .total-card-link { text-decoration: none; }
+    .total-card {
+      background: var(--blanco);
+      border-radius: var(--borde-radio);
+      box-shadow: var(--sombra-suave);
+      padding: 1rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 90px;
+      text-align: center;
+      transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+    }
+    .total-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,.08); }
+    .total-card .label { font-weight: 600; color: var(--texto-oscuro); font-size: 0.95rem; margin-bottom: 0.25rem; }
+    .total-card .num { font-size: 1.3rem; font-weight: 700; color: var(--verde-oscuro); }
+    .total-card.active { outline: 2px solid var(--verde-oscuro); background: #f2fbf6; }
+
+    /* Filtros */
+    .filter-bar { display:flex; gap:1rem; align-items:center; margin: .5rem 0 1rem; }
+    .filter-bar select { padding:.5rem .7rem; border-radius:8px; border:1px solid #cfd8d3; background:#fff; }
+
+    @media (max-width: 980px) { .totales-wrap { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 640px) { .totales-wrap { grid-template-columns: repeat(2, 1fr); } }
   </style>
 </head>
 <body>
   <header class="header-prov">
     <div class="header-prov__left">
       <img src="{% static 'img/Logo-mrf.png' %}" alt="Logo" class="header-prov__logo">
-      <h1 class="header-prov__titulo">Reporte por Usuario</h1>
+      <h1 class="header-prov__titulo">Reporte General</h1>
     </div>
     <div class="header-prov__right">
+      <button type="button" onclick="history.back()" class="btn--light"><i class="fas fa-arrow-left"></i> Volver</button>
       <form action="{% url 'logout' %}" method="post" style="display:inline;">
         {% csrf_token %}
-        <button type="submit" class="btn btn--light"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</button>
+        <button type="submit" class="btn--light"><i class="fas fa-sign-out-alt"></i> Cerrar sesion</button>
       </form>
     </div>
   </header>
 
   <main class="panel-admin-container">
-    <div class="switch-buttons">
-      <a href="?vista=resumen">Ver resumen</a>
-      <a href="?vista=detalle">Ver detalle</a>      
+    {% if totales %}
+      <div class="totales-wrap">
+        <a class="total-card-link" href="?tipo=miembros&origen={{ origen }}">
+          <div class="total-card {% if tipo == 'miembros' %}active{% endif %}">
+            <span class="label"><i class="fa-solid fa-users"></i> Miembros</span>
+            <span class="num">{{ totales.miembros }}</span>
+          </div>
+        </a>
+
+        <a class="total-card-link" href="?tipo=municipales&origen={{ origen }}">
+          <div class="total-card {% if tipo == 'municipales' %}active{% endif %}">
+            <span class="label"><i class="fa-solid fa-city"></i> Dir. Municipal</span>
+            <span class="num">{{ totales.municipales }}</span>
+          </div>
+        </a>
+
+        <a class="total-card-link" href="?tipo=provinciales&origen={{ origen }}">
+          <div class="total-card {% if tipo == 'provinciales' %}active{% endif %}">
+            <span class="label"><i class="fa-solid fa-map"></i> Dir. Provincial</span>
+            <span class="num">{{ totales.provinciales }}</span>
+          </div>
+        </a>
+
+        <a class="total-card-link" href="?tipo=nacionales&origen={{ origen }}">
+          <div class="total-card {% if tipo == 'nacionales' %}active{% endif %}">
+            <span class="label"><i class="fa-solid fa-flag"></i> Dir. Nacional</span>
+            <span class="num">{{ totales.nacionales }}</span>
+          </div>
+        </a>
+
+        <div class="total-card">
+          <span class="label"><i class="fa-solid fa-sigma"></i> Total General</span>
+          <span class="num">{{ totales.general }}</span>
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="filter-bar">
+      <form method="get" id="filtroForm">
+        <input type="hidden" name="tipo" value="{{ tipo }}">
+        <label for="origen">Origen:</label>
+        <select name="origen" id="origen" onchange="document.getElementById('filtroForm').submit()">
+          <option value="todos" {% if origen == 'todos' %}selected{% endif %}>Todos</option>
+          <option value="web" {% if origen == 'web' %}selected{% endif %}>Solo Web (sin usuario)</option>
+          <option value="usuarios" {% if origen == 'usuarios' %}selected{% endif %}>Solo Usuarios</option>
+        </select>
+      </form>
+      <div style="margin-left:auto; opacity:.8;">Mostrando: <strong>{{ titulo_tipo }}</strong><strong>{{ total_mostrado }}</strong> registro(s)</div>
     </div>
 
-    {% if vista == "resumen" %}
-      <h2 class="form-title">Resumen por Usuario</h2>
-      {% for usuario in data %}
-        <div class="reporte-block">
-          <h3>{{ usuario.usuario.username }}</h3>
-          <ul>
-            <li><strong>Miembros:</strong> {{ usuario.miembros|length }}</li>
-            <li><strong>Dirección Municipal:</strong> {{ usuario.municipales|length }}</li>
-            <li><strong>Dirección Provincial:</strong> {{ usuario.provinciales|length }}</li>
-            <li><strong>Dirección Nacional:</strong> {{ usuario.nacionales|length }}</li>
-          </ul>
-        </div>
-      {% endfor %}
-    {% else %}
-      <h2 class="form-title">Detalle de Registros por Usuario</h2>
-      {% for usuario in data %}
-        <div class="reporte-block">
-          <h3>{{ usuario.usuario.username }}</h3>
-
-          {% if usuario.miembros %}
-            <h4>Miembros</h4>
-            <table class="reporte-table">
-              <tr><th>Nombre</th><th>Cédula</th><th>Teléfono</th></tr>
-              {% for m in usuario.miembros %}
-                <tr><td>{{ m.nombre }}</td><td>{{ m.cedula }}</td><td>{{ m.telefono }}</td></tr>
-              {% endfor %}
-            </table>
-          {% endif %}
-
-          {% if usuario.municipales %}
-            <h4>Dirección Municipal</h4>
-            <table class="reporte-table">
-              <tr><th>Provincia</th><th>Municipio</th><th>Nombre</th><th>Cargo</th></tr>
-              {% for c in usuario.municipales %}
-                <tr><td>{{ c.provincia }}</td><td>{{ c.municipio }}</td><td>{{ c.nombre }}</td><td>{{ c.get_orden_display }}</td></tr>
-              {% endfor %}
-            </table>
-          {% endif %}
-
-          {% if usuario.provinciales %}
-            <h4>Dirección Provincial</h4>
-            <table class="reporte-table">
-              <tr><th>Provincia</th><th>Nombre</th><th>Cargo</th></tr>
-              {% for c in usuario.provinciales %}
-                <tr><td>{{ c.provincia }}</td><td>{{ c.nombre }}</td><td>{{ c.get_orden_display }}</td></tr>
-              {% endfor %}
-            </table>
-          {% endif %}
-
-          {% if usuario.nacionales %}
-            <h4>Dirección Nacional</h4>
-            <table class="reporte-table">
-              <tr><th>Nombre</th><th>Cargo</th></tr>
-              {% for c in usuario.nacionales %}
-                <tr><td>{{ c.nombre }}</td><td>{{ c.get_orden_display }}</td></tr>
-              {% endfor %}
-            </table>
-          {% endif %}
-        </div>
-      {% endfor %}
+    {# TABLAS PLANAS CON CREADOR #}
+    {% if tipo == 'miembros' %}
+      <div class="reporte-block">
+        <table class="reporte-table">
+          <thead>
+            <tr>
+              <th>Nombre</th><th>Cedula</th><th>Telefono</th><th>Creado por</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for m in records %}
+              <tr>
+                <td>{{ m.nombre }}</td>
+                <td>{{ m.cedula }}</td>
+                <td>{{ m.telefono }}</td>
+                <td>{% if m.creado_por %}{{ m.creado_por.username }}{% else %}(Web){% endif %}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="4">Sin registros.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     {% endif %}
+
+    {% if tipo == 'municipales' %}
+      <div class="reporte-block">
+        <table class="reporte-table">
+          <thead>
+            <tr>
+              <th>Provincia</th><th>Municipio</th><th>Nombre</th><th>Cargo</th><th>Creado por</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for c in records %}
+              <tr>
+                <td>{{ c.provincia }}</td>
+                <td>{{ c.municipio }}</td>
+                <td>{{ c.nombre }}</td>
+                <td>{{ c.get_orden_display }}</td>
+                <td>{% if c.creado_por %}{{ c.creado_por.username }}{% else %}(Web){% endif %}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="5">Sin registros.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+
+    {% if tipo == 'provinciales' %}
+      <div class="reporte-block">
+        <table class="reporte-table">
+          <thead>
+            <tr>
+              <th>Provincia</th><th>Nombre</th><th>Cargo</th><th>Creado por</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for c in records %}
+              <tr>
+                <td>{{ c.provincia }}</td>
+                <td>{{ c.nombre }}</td>
+                <td>{{ c.get_orden_display }}</td>
+                <td>{% if c.creado_por %}{{ c.creado_por.username }}{% else %}(Web){% endif %}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="4">Sin registros.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+
+    {% if tipo == 'nacionales' %}
+      <div class="reporte-block">
+        <table class="reporte-table">
+          <thead>
+            <tr>
+              <th>Nombre</th><th>Cargo</th><th>Creado por</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for c in records %}
+              <tr>
+                <td>{{ c.nombre }}</td>
+                <td>{{ c.get_orden_display }}</td>
+                <td>{% if c.creado_por %}{{ c.creado_por.username }}{% else %}(Web){% endif %}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="3">Sin registros.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endif %}
+
   </main>
 </body>
 </html>

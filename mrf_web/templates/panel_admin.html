@@ -131,26 +131,31 @@
   <main class="panel-admin-container">
     <h2 class="form-title">Bienvenido, {{ user.username }}</h2>
     <div class="panel-grid">
+      <!-- Todos pueden ver esta opción -->
       <a href="{% url 'formulario_miembros' %}" class="panel-card">
         <i class="fas fa-user-plus panel-icon"></i>
         <span>Inscripción de Miembros</span>
       </a>
-      <a href="{% url 'formulario_direccion_municipal' %}" class="panel-card">
-        <i class="fas fa-city panel-icon"></i>
-        <span>Dirección Municipal</span>
-      </a>
-      <a href="{% url 'formulario_direccion_provincial' %}" class="panel-card">
-        <i class="fas fa-landmark panel-icon"></i>
-        <span>Dirección Provincial</span>
-      </a>
-      <a href="{% url 'formulario_direccion_nacional' %}" class="panel-card">
-        <i class="fas fa-flag panel-icon"></i>
-        <span>Dirección Nacional</span>
-      </a>      
-      <a href="{% url 'reporte_por_usuario' %}" class="panel-card">
-      <i class="fas fa-chart-pie panel-icon"></i>
-      <span>Reporte por Usuario</span>
-    </a>
+
+      <!-- Solo jortiz y efeliz pueden ver estas -->
+      {% if user.username == "jortiz" or user.username == "eguzman" %}
+        <a href="{% url 'formulario_direccion_municipal' %}" class="panel-card">
+          <i class="fas fa-city panel-icon"></i>
+          <span>Dirección Municipal</span>
+        </a>
+        <a href="{% url 'formulario_direccion_provincial' %}" class="panel-card">
+          <i class="fas fa-landmark panel-icon"></i>
+          <span>Dirección Provincial</span>
+        </a>
+        <a href="{% url 'formulario_direccion_nacional' %}" class="panel-card">
+          <i class="fas fa-flag panel-icon"></i>
+          <span>Dirección Nacional</span>
+        </a>      
+        <a href="{% url 'reporte_por_usuario' %}" class="panel-card">
+          <i class="fas fa-chart-pie panel-icon"></i>
+          <span>Reporte por Usuario</span>
+        </a>
+      {% endif %}
     </div>
   </main>
 </body>

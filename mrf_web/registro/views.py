@@ -18,7 +18,7 @@ def index(request):
         form = MiembroForm(request.POST)
         if form.is_valid():
             form.save()
-            mensaje = "¡Gracias por registrarte!"
+            mensaje = "Gracias por registrarte!"
             form = MiembroForm()
     return render(request, 'index.html', {'form': form, 'mensaje': mensaje})
 
@@ -35,7 +35,7 @@ def admin_login(request):
             login(request, user)
             return redirect('panel_admin')
         else:
-            error = 'Credenciales inválidas o usuario no autorizado.'
+            error = 'Credenciales invalidas o usuario no autorizado.'
 
     return render(request, 'admin_login.html', {'error': error})
 
@@ -130,6 +130,7 @@ def formulario_direccion_provincial(request):
         'editar_id': editar_id,
     })
 
+
 # --- FORMULARIO NACIONAL ---
 @login_required
 def formulario_direccion_nacional(request):
@@ -162,7 +163,8 @@ def formulario_direccion_nacional(request):
         'registros': registros,
         'editar_id': editar_id
     })
-    
+
+
 # --- SOLO SUPERUSUARIO PUEDE ELIMINAR ---
 @user_passes_test(lambda u: u.is_superuser)
 def eliminar_cargo_municipal(request, id):
@@ -192,32 +194,76 @@ def eliminar_miembro(request, miembro_id):
         miembro.delete()
     return redirect('formulario_miembros')
 
-# --- REPORTE GENERAL POR USUARIO ---
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+
+from .models import Miembro, CargoMunicipal, CargoProvincial, CargoNacional
+
+
 @login_required
 def reporte_general_por_usuario(request):
-    vista = request.GET.get('vista', 'resumen')
-    usuarios = User.objects.all()
-    data = []
+    # tipo: miembros | municipales | provinciales | nacionales
+    tipo = request.GET.get('tipo', 'miembros')
+    tipos_validos = {'miembros', 'municipales', 'provinciales', 'nacionales'}
+    if tipo not in tipos_validos:
+        tipo = 'miembros'
 
-    for user in usuarios:
-        miembros = Miembro.objects.filter(creado_por=user)
-        municipales = CargoMunicipal.objects.filter(creado_por=user)
-        provinciales = CargoProvincial.objects.filter(creado_por=user)
-        nacionales = CargoNacional.objects.filter(creado_por=user)
+    # origen: todos | web (creado_por IS NULL) | usuarios (creado_por IS NOT NULL)
+    origen = request.GET.get('origen', 'todos')
+    if origen not in {'todos', 'web', 'usuarios'}:
+        origen = 'todos'
 
-        if miembros.exists() or municipales.exists() or provinciales.exists() or nacionales.exists():
-            data.append({
-                'usuario': user,
-                'miembros': miembros,
-                'municipales': municipales,
-                'provinciales': provinciales,
-                'nacionales': nacionales,
-            })
+    # Totales para las tarjetas (generales)
+    totales = {
+        'miembros': Miembro.objects.count(),
+        'municipales': CargoMunicipal.objects.count(),
+        'provinciales': CargoProvincial.objects.count(),
+        'nacionales': CargoNacional.objects.count(),
+    }
+    totales['general'] = sum(totales.values())
 
-    return render(request, 'reporte_por_usuario.html', {
-        'data': data,
-        'vista': vista
-    })
+    # Subtotales "Web" (sin usuario) para ayudar a identificar volumen
+    totales_web = {
+        'miembros': Miembro.objects.filter(creado_por__isnull=True).count(),
+        'municipales': CargoMunicipal.objects.filter(creado_por__isnull=True).count(),
+        'provinciales': CargoProvincial.objects.filter(creado_por__isnull=True).count(),
+        'nacionales': CargoNacional.objects.filter(creado_por__isnull=True).count(),
+    }
+
+    # Queryset plano por tipo, con select_related a creado_por
+    if tipo == 'miembros':
+        qs = Miembro.objects.select_related('creado_por').order_by('-id')
+    elif tipo == 'municipales':
+        qs = CargoMunicipal.objects.select_related('creado_por').order_by('-id')
+    elif tipo == 'provinciales':
+        qs = CargoProvincial.objects.select_related('creado_por').order_by('-id')
+    else:  # 'nacionales'
+        qs = CargoNacional.objects.select_related('creado_por').order_by('-id')
+
+    # Filtro por origen
+    if origen == 'web':
+        qs = qs.filter(creado_por__isnull=True)
+    elif origen == 'usuarios':
+        qs = qs.filter(creado_por__isnull=False)
+
+    titulos = {
+        'miembros': 'Miembros',
+        'municipales': 'Direccion Municipal',
+        'provinciales': 'Direccion Provincial',
+        'nacionales': 'Direccion Nacional',
+    }
+
+    context = {
+        'tipo': tipo,
+        'origen': origen,
+        'titulo_tipo': titulos[tipo],
+        'totales': totales,
+        'totales_web': totales_web,
+        'records': qs,
+        'total_mostrado': qs.count(),
+    }
+    return render(request, 'reporte_por_usuario.html', context)
+
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
